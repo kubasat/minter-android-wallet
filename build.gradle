@@ -67,7 +67,7 @@ task clean(type: Delete) {
 
 ext {
     minterMinSdk = 19
-    minterMaxSdk = 27
+    minterMaxSdk = 28
     minterLibSupport = "27.1.1"
     minterBuildTools = "28.0.0" //"27.0.3"
 }
