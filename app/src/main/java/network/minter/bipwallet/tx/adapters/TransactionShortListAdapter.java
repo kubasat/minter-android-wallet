@@ -48,7 +48,6 @@ import network.minter.explorer.models.HistoryTransaction;
 
 /**
  * minter-android-wallet. 2018
- *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class TransactionShortListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements DiffUtilDispatcherDelegate<HistoryTransaction> {
@@ -56,13 +55,12 @@ public class TransactionShortListAdapter extends RecyclerView.Adapter<RecyclerVi
     private final List<MinterAddress> mMyAddresses;
     private List<TxItem> mItems = new ArrayList<>(0);
     private LayoutInflater mInflater;
+    private int mExpandedPosition = -1;
+    private TransactionListAdapter.OnExplorerOpenClickListener mOnExplorerOpenClickListener;
 
     public TransactionShortListAdapter(List<MinterAddress> myAddresses) {
         mMyAddresses = myAddresses;
     }
-
-    private int mExpandedPosition = -1;
-    private TransactionListAdapter.OnExplorerOpenClickListener mOnExplorerOpenClickListener;
 
     @NonNull
     @Override

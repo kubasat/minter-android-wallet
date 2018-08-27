@@ -45,7 +45,6 @@ import network.minter.bipwallet.tx.adapters.TxItem;
 
 /**
  * minter-android-wallet. 2018
- *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class ExpandableTxViewHolder extends RecyclerView.ViewHolder {

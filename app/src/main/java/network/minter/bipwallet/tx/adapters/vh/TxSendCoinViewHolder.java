@@ -44,7 +44,6 @@ import static network.minter.bipwallet.internal.helpers.MathHelper.bdNull;
 
 /**
  * minter-android-wallet. 2018
- *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public final class TxSendCoinViewHolder extends ExpandableTxViewHolder {

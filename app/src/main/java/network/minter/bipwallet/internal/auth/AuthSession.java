@@ -179,18 +179,18 @@ public class AuthSession {
         return mUser;
     }
 
-    public void setUser(User user) {
-        mUser = user;
-        save();
-        mUserUpdateSubject.onNext(mUser);
-    }
-
     public void setUser(User.Data userData) {
         if (mUser == null) {
             mUser = new User(getAuthToken());
         }
 
         mUser.data = userData;
+        save();
+        mUserUpdateSubject.onNext(mUser);
+    }
+
+    public void setUser(User user) {
+        mUser = user;
         save();
         mUserUpdateSubject.onNext(mUser);
     }

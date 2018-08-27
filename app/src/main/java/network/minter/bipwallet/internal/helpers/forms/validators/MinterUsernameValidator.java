@@ -29,7 +29,6 @@ import java.util.regex.Pattern;
 
 /**
  * minter-android-wallet. 2018
- *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class MinterUsernameValidator extends RegexValidator {

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
- * @link https://github.com/edwardstock
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -256,7 +256,6 @@ public class InputGroup {
      * inputPasswordRepeat
      * if inputPassword was changed, validator will triggered for both fields (instead of only for editing field (default behavior))
      * and if inputPasswordRepeat was changed, validator will triggered for both fields
-     *
      * @param f1 field 1 Order no matters
      * @param f2 field 2
      * @return

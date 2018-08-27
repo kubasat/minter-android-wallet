@@ -73,16 +73,6 @@ public class AddressListPresenter extends MvpBasePresenter<AddressManageModule.A
         mAdapter.setOnBalanceClickListener(this::onClickBalance);
     }
 
-    private void onClickBalance(View view, AddressItem addressItem) {
-        getViewState().startTransactionsList();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        reload();
-    }
-
     public void onClickAddAddress() {
         if (session.getRole() == AuthSession.AuthType.Advanced) {
             getViewState().startCreateAddress(REQUEST_FOR_RESULT);
@@ -102,6 +92,16 @@ public class AddressListPresenter extends MvpBasePresenter<AddressManageModule.A
             });
             */
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        reload();
+    }
+
+    private void onClickBalance(View view, AddressItem addressItem) {
+        getViewState().startTransactionsList();
     }
 
     @Override

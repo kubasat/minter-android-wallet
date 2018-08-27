@@ -34,15 +34,15 @@
     >
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/root"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:animateLayoutChanges="true"
-        android:paddingTop="@dimen/margin_edges_half"
         android:background="@color/white"
+        android:paddingTop="@dimen/margin_edges_half"
         >
 
 
@@ -193,8 +193,6 @@
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/layout_calculation"
-            android:visibility="gone"
-            tools:visibility="visible"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_edges"
@@ -203,9 +201,11 @@
             android:background="@drawable/shape_rounded_grey"
             android:orientation="vertical"
             android:padding="16dp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layout_incoming_coin"
+            tools:visibility="visible"
             >
 
             <TextView
