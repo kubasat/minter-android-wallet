@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<!--
   ~ Copyright (C) by MinterTeam. 2018
-  ~ @link https://github.com/MinterTeam
-  ~ @link https://github.com/edwardstock
+  ~ @link <a href="https://github.com/MinterTeam">Org Github</a>
+  ~ @link <a href="https://github.com/edwardstock">Maintainer Github</a>
   ~
   ~ The MIT License
   ~
@@ -23,7 +23,7 @@
   ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
   ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   ~ THE SOFTWARE.
-  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+  -->
 
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -33,6 +33,7 @@
     android:layout_height="match_parent"
     tools:context=".advanced.ui.AdvancedMainActivity"
     >
+
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="0dp"
@@ -73,18 +74,17 @@
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="@dimen/margin_edges"
-            android:paddingEnd="@dimen/margin_edges"
-            android:paddingBottom="@dimen/margin_edges"
-
+            android:paddingTop="@dimen/margin_edges_half"
             >
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/layout_input_username"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_edges"
-                android:hint="Choose \@username"
+                android:layout_marginStart="@dimen/margin_edges_input"
+                android:layout_marginTop="@dimen/margin_edges_medium"
+                android:layout_marginEnd="@dimen/margin_edges_input"
+                android:hint="@string/input_register_label_username"
                 app:hintAnimationEnabled="true"
                 app:hintEnabled="true"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -98,11 +98,11 @@
                     android:id="@+id/input_username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="-3dp"
-                    android:layout_marginEnd="-3dp"
+                    android:imeOptions="actionNext"
                     android:inputType="text"
                     android:text="\@"
-                    android:imeOptions="actionNext"
+                    android:tag="username"
+                    android:textSize="@dimen/text_size_default"
                     />
             </android.support.design.widget.TextInputLayout>
 
@@ -110,8 +110,10 @@
                 android:id="@+id/layout_input_password"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_edges"
-                android:hint="Choose password"
+                android:layout_marginStart="@dimen/margin_edges_input"
+                android:layout_marginTop="@dimen/margin_edges_medium"
+                android:layout_marginEnd="@dimen/margin_edges_input"
+                android:hint="@string/input_register_label_password"
                 app:hintAnimationEnabled="true"
                 app:hintEnabled="true"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -125,10 +127,11 @@
                     android:id="@+id/input_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="-3dp"
-                    android:layout_marginEnd="-3dp"
                     android:inputType="text|textPassword"
+                    android:imeOptions="actionNext"
                     android:tag="password"
+                    android:textSize="@dimen/text_size_default"
+                    tools:text="Ppaaa"
                     />
             </android.support.design.widget.TextInputLayout>
 
@@ -136,8 +139,10 @@
                 android:id="@+id/layout_input_password_repeat"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_edges"
-                android:hint="Confirm password"
+                android:layout_marginStart="@dimen/margin_edges_input"
+                android:layout_marginTop="@dimen/margin_edges_medium"
+                android:layout_marginEnd="@dimen/margin_edges_input"
+                android:hint="@string/input_register_label_password_repeat"
                 app:hintAnimationEnabled="true"
                 app:hintEnabled="true"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -151,9 +156,9 @@
                     android:id="@+id/inputPasswordRepeat"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="-3dp"
-                    android:layout_marginEnd="-3dp"
                     android:inputType="text|textPassword"
+                    android:imeOptions="actionNext"
+                    android:textSize="@dimen/text_size_default"
                     />
             </android.support.design.widget.TextInputLayout>
 
@@ -161,10 +166,13 @@
                 android:id="@+id/layout_input_email"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_edges"
-                android:hint="Email (Optional *)"
+                android:layout_marginStart="@dimen/margin_edges_input"
+                android:layout_marginTop="@dimen/margin_edges_medium"
+                android:layout_marginEnd="@dimen/margin_edges_input"
+                android:hint="@string/input_register_label_email"
                 app:hintAnimationEnabled="true"
                 app:hintEnabled="true"
+                android:imeOptions="actionSend"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/layout_input_password_repeat"
@@ -176,46 +184,49 @@
                     android:id="@+id/inputEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="-3dp"
-                    android:layout_marginEnd="-3dp"
                     android:inputType="text|textEmailAddress|textWebEmailAddress"
                     android:tag="email"
+                    android:textSize="@dimen/text_size_default"
+                    tools:text="a@b"
                     />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:visibility="gone"
                 android:id="@+id/layout_input_phone"
                 android:layout_width="0dp"
-                app:passwordToggleDrawable="@null"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_edges_input"
                 android:layout_marginTop="@dimen/margin_edges"
-                android:hint="Mobile Number (Optional *)"
+                android:layout_marginEnd="@dimen/margin_edges_input"
+                android:hint="@string/input_register_label_phone"
+                android:visibility="gone"
                 app:hintAnimationEnabled="true"
                 app:hintEnabled="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/layout_input_email"
                 app:layout_goneMarginTop="0dp"
+                app:passwordToggleDrawable="@null"
                 >
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/input_phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="-3dp"
-                    android:layout_marginEnd="-3dp"
                     android:inputType="text|phone"
                     android:tag="phone"
                     />
             </android.support.design.widget.TextInputLayout>
 
-            <Button
+            <network.minter.bipwallet.internal.views.widgets.WalletButton
                 android:id="@+id/action"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_edges"
                 android:layout_marginTop="@dimen/margin_edges_large"
-                android:text="Create wallet"
+                android:layout_marginEnd="@dimen/margin_edges"
+                android:text="@string/btn_create_wallet"
+                android:enabled="false"
                 android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -226,26 +237,40 @@
                 android:id="@+id/error_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_edges"
+                android:layout_marginTop="@dimen/margin_edges"
+                android:layout_marginEnd="@dimen/margin_edges"
+                android:textAlignment="center"
                 android:textColor="@color/errorColor"
                 android:visibility="gone"
-                android:layout_marginTop="@dimen/margin_edges"
-                android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/action"
                 />
 
             <TextView
+                android:id="@+id/hint_email"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_edges"
                 android:layout_marginTop="@dimen/margin_edges"
+                android:layout_marginEnd="@dimen/margin_edges"
                 android:fontFamily="@font/ubuntu"
-                android:text="* Email and Mobile Number are optional but can be very handy if you forget your password"
+                android:text="@string/input_register_hint_email"
                 android:textSize="@dimen/text_size_14"
                 android:textStyle="normal"
+                android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/error_text"
+                />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="@dimen/margin_edges"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/hint_email"
                 />
 
         </android.support.constraint.ConstraintLayout>

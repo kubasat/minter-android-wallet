@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2018 by MinterTeam
- * @link https://github.com/MinterTeam
+ * Copyright (C) by MinterTeam. 2018
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -26,7 +27,6 @@
 package network.minter.bipwallet.receiving.views;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.view.View;
 
 import com.arellomobile.mvp.InjectViewState;
@@ -45,11 +45,8 @@ import network.minter.bipwallet.internal.mvp.MvpBasePresenter;
 import network.minter.bipwallet.receiving.ReceiveTabModule;
 import network.minter.bipwallet.receiving.helpers.QRAddressGenerator;
 import network.minter.bipwallet.share.ShareManager;
-import network.minter.mintercore.crypto.MinterAddress;
+import network.minter.core.crypto.MinterAddress;
 import timber.log.Timber;
-
-import static android.support.v4.content.FileProvider.getUriForFile;
-import static network.minter.bipwallet.internal.Wallet.app;
 
 /**
  * MinterWallet. 2018
@@ -77,6 +74,7 @@ public class ReceiveTabPresenter extends MvpBasePresenter<ReceiveTabModule.Recei
         }
         mAddress = secretStorage.getAddresses().get(0);
         getViewState().setAddress(mAddress);
+        getViewState().setOnClickAddress(this::onClickAddress);
 
         getViewState().showQRProgress();
         QRAddressGenerator.create(Wallet.app().display().dpToPx(200), mAddress.toString())
@@ -93,18 +91,19 @@ public class ReceiveTabPresenter extends MvpBasePresenter<ReceiveTabModule.Recei
                     getViewState().hideQRProgress();
                 });
 
-        getViewState().setOnActionQR(v -> {
-            getViewState().startQRPreview(v, mOutFile.toString());
-        });
+        getViewState().setOnActionQR(v -> getViewState().startQRPreview(v, mOutFile.toString()));
+    }
+
+    private void onClickAddress(View view) {
+        ContextHelper.copyToClipboard(view.getContext(), mAddress.toString());
     }
 
     private void onCopyQR(View view) {
-        Uri qrPath = getUriForFile(app().context(), app().context().getApplicationContext().getPackageName() + ".file.provider", mOutFile);
-        ContextHelper.copyToClipboard(view.getContext(), mAddress.toString());
+//        Uri qrPath = getUriForFile(app().context(), app().context().getApplicationContext().getPackageName() + ".file.provider", mOutFile);
 
         final Intent intent = new ShareManager.IntentBuilder()
                 .setChooserTitle("Share address")
-                .setStream(qrPath)
+//                .setStream(qrPath)
                 .setText(mAddress.toString())
                 .setContentType("text/plain")
                 .build();

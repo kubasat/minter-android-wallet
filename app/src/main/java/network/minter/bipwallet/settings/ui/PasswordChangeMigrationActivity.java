@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2018 by MinterTeam
- * @link https://github.com/MinterTeam
+ * Copyright (C) by MinterTeam. 2018
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -41,15 +42,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import network.minter.bipwallet.R;
 import network.minter.bipwallet.advanced.repo.SecretStorage;
-import network.minter.bipwallet.auth.ui.InputGroup;
 import network.minter.bipwallet.internal.BaseMvpInjectActivity;
 import network.minter.bipwallet.internal.dialogs.WalletDialog;
+import network.minter.bipwallet.internal.helpers.forms.InputGroup;
 import network.minter.bipwallet.internal.helpers.forms.validators.CompareValidator;
-import network.minter.bipwallet.internal.helpers.forms.validators.CustomValidator;
 import network.minter.bipwallet.internal.helpers.forms.validators.LengthValidator;
 import network.minter.bipwallet.settings.SettingsTabModule;
-import network.minter.bipwallet.settings.views.PasswordChangeMigrationPresenter;
-import network.minter.mintercore.crypto.HashUtil;
+import network.minter.bipwallet.settings.views.migration.PasswordChangeMigrationPresenter;
+
+import static android.support.v4.content.res.ResourcesCompat.getFont;
 
 /**
  * MinterWallet. 2018
@@ -61,7 +62,6 @@ public class PasswordChangeMigrationActivity extends BaseMvpInjectActivity imple
     @Inject Provider<PasswordChangeMigrationPresenter> presenterProvider;
     @InjectPresenter PasswordChangeMigrationPresenter presenter;
     @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.layout_password_old) TextInputLayout layoutPasswordOld;
     @BindView(R.id.layout_password_new) TextInputLayout layoutPasswordNew;
     @BindView(R.id.layout_password_new_repeat) TextInputLayout layoutPasswordNewRepeat;
     @BindView(R.id.action) Button action;
@@ -105,10 +105,13 @@ public class PasswordChangeMigrationActivity extends BaseMvpInjectActivity imple
         setContentView(R.layout.activity_password_change_migration);
         ButterKnife.bind(this);
         setupToolbar(toolbar);
+
+        layoutPasswordNew.setTypeface(getFont(this, R.font._ubuntu_regular));
+        layoutPasswordNewRepeat.setTypeface(getFont(this, R.font._ubuntu_regular));
+
         mInputGroup = new InputGroup();
-        mInputGroup.addInput(layoutPasswordOld, layoutPasswordNew, layoutPasswordNewRepeat);
-        mInputGroup.addValidator(layoutPasswordOld, new CustomValidator("Invalid password", (v) -> HashUtil.sha256Hex(v.toString()).equals(secretStorage.getEncryptionKey())));
-        mInputGroup.addValidator(layoutPasswordNew, new LengthValidator(getString(R.string.input_signin_password_invalid), 6));
+        mInputGroup.addInput(layoutPasswordNew, layoutPasswordNewRepeat);
+        mInputGroup.addValidator(layoutPasswordNew, new LengthValidator(getString(R.string.input_password_invalid), 6));
         mInputGroup.addValidator(layoutPasswordNewRepeat, new CompareValidator(getString(R.string.input_signin_password_not_match), layoutPasswordNew));
     }
 }

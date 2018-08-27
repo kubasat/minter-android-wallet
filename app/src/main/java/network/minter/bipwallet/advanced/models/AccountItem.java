@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * Copyright (C) by MinterTeam. 2018
  * @link https://github.com/MinterTeam
  * @link https://github.com/edwardstock
@@ -22,10 +22,11 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- ******************************************************************************/
+ */
 
 package network.minter.bipwallet.advanced.models;
 
+import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
 
 import org.parceler.Parcel;
@@ -36,8 +37,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import network.minter.mintercore.crypto.MinterAddress;
-import network.minter.my.MyMinterApi;
+import network.minter.core.crypto.MinterAddress;
+import network.minter.profile.MinterProfileApi;
 
 import static network.minter.bipwallet.internal.common.Preconditions.checkNotNull;
 
@@ -53,6 +54,7 @@ public class AccountItem implements Serializable, Cloneable {
     public String coin;
     public MinterAddress address;
     public BigDecimal balance;
+    public BigDecimal balanceBase;
     public BigDecimal balanceUsd;
     int mHashCode;
 
@@ -63,20 +65,24 @@ public class AccountItem implements Serializable, Cloneable {
         address = another.address;
         balanceUsd = another.balanceUsd;
         balance = another.balance;
+        balanceBase = another.balanceBase;
         mHashCode = another.mHashCode;
     }
 
-    public AccountItem(String avatar, String coin, MinterAddress address, BigDecimal balance, BigDecimal balanceUsd) {
-        this(coin, address, balance, balanceUsd);
+    public AccountItem(String avatar, String coin, MinterAddress address, BigDecimal balance, BigDecimal balanceUsd, BigDecimal balanceBase) {
+        this(coin, address, balance, balanceUsd, balanceBase);
         this.avatar = avatar;
     }
 
-    public AccountItem(String coin, MinterAddress address, BigDecimal balance, BigDecimal balanceUsd) {
+    @SuppressWarnings("NullableProblems")
+    public AccountItem(@NonNull String coin, MinterAddress address, BigDecimal balance, BigDecimal balanceUsd, BigDecimal balanceBase) {
         this.id = UUID.randomUUID().toString();
         this.coin = checkNotNull(coin, "Coin name required");
         this.address = checkNotNull(address, "Address required");
         this.balance = balance;
         this.balanceUsd = balanceUsd;
+        this.balanceBase = balanceBase;
+        this.avatar = MinterProfileApi.getCoinAvatarUrl(coin);
         mHashCode = Objects.hash(id, avatar, coin, address, balance, balanceUsd);
     }
 
@@ -85,7 +91,7 @@ public class AccountItem implements Serializable, Cloneable {
 
     public String getAvatar() {
         if (avatar == null) {
-            return MyMinterApi.getCoinAvatarUrl(coin.toUpperCase());
+            return MinterProfileApi.getCoinAvatarUrl(coin.toUpperCase());
         }
         return avatar;
     }
@@ -106,6 +112,14 @@ public class AccountItem implements Serializable, Cloneable {
         }
 
         return balance;
+    }
+
+    public BigDecimal getBalanceBase() {
+        if (balanceBase == null) {
+            balanceBase = new BigDecimal(0);
+        }
+
+        return balanceBase;
     }
 
     public BigDecimal getBalanceUsd() {
@@ -129,6 +143,14 @@ public class AccountItem implements Serializable, Cloneable {
     @Override
     public int hashCode() {
         return mHashCode;
+    }
+
+    public String getCoin() {
+        return coin.toUpperCase();
+    }
+
+    public MinterAddress getAddress() {
+        return address;
     }
 
     public static class DiffUtilImpl extends DiffUtil.Callback {

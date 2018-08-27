@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2018 by MinterTeam
- * @link https://github.com/MinterTeam
+ * Copyright (C) by MinterTeam. 2018
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -36,6 +37,7 @@ import com.pnikosis.materialishprogress.ProgressWheel;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import network.minter.bipwallet.R;
+import network.minter.bipwallet.internal.common.DeferredCall;
 
 /**
  * MinterWallet. 2018
@@ -45,6 +47,7 @@ import network.minter.bipwallet.R;
 public class WalletProgressDialog extends WalletDialog {
     @BindView(R.id.dialog_text) TextView text;
     @BindView(R.id.progress) ProgressWheel progress;
+    private DeferredCall<WalletProgressDialog> mDefer = DeferredCall.createWithSize(1);
     private Builder mBuilder;
     private int mMaxProgress = 100;
 
@@ -57,19 +60,21 @@ public class WalletProgressDialog extends WalletDialog {
         mMaxProgress = max;
     }
 
-    public void setIndeterminate(boolean indeterminate) {
-        if (indeterminate) {
-            progress.spin();
-        } else {
-            setProgress(0);
-        }
+    public void setIndeterminate(final boolean indeterminate) {
+        mDefer.call(ctx -> {
+            if (indeterminate) {
+                progress.spin();
+            } else {
+                setProgress(0);
+            }
+        });
     }
 
-    public void setProgress(int current) {
-        if (current == 0) {
-            current = 1;
-        }
-        progress.setProgress((float) current / (float) mMaxProgress);
+    public void setProgress(final int current) {
+        mDefer.call(ctx -> {
+            float val = current == 0F ? 1 : (float) current;
+            ctx.progress.setProgress(val / (float) ctx.mMaxProgress);
+        });
     }
 
     @Override
@@ -77,6 +82,7 @@ public class WalletProgressDialog extends WalletDialog {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.wallet_progress_dialog);
         ButterKnife.bind(this);
+        mDefer.attach(this);
         progress.spin();
         title.setText(mBuilder.mTitle);
         if (mBuilder.mText == null) {
@@ -84,6 +90,12 @@ public class WalletProgressDialog extends WalletDialog {
         } else {
             text.setText(mBuilder.mText);
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mDefer.detach();
     }
 
     public static final class Builder extends WalletDialogBuilder<WalletProgressDialog, Builder> {
@@ -99,12 +111,12 @@ public class WalletProgressDialog extends WalletDialog {
         }
 
         public Builder setText(@StringRes int textRes) {
-            return setText(mContext.getResources().getString(textRes));
+            return setText(getContext().getResources().getString(textRes));
         }
 
         @Override
         public WalletProgressDialog create() {
-            return new WalletProgressDialog(mContext, this);
+            return new WalletProgressDialog(getContext(), this);
         }
     }
 }

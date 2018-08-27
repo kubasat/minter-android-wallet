@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<!--
   ~ Copyright (C) by MinterTeam. 2018
-  ~ @link https://github.com/MinterTeam
-  ~ @link https://github.com/edwardstock
+  ~ @link <a href="https://github.com/MinterTeam">Org Github</a>
+  ~ @link <a href="https://github.com/edwardstock">Maintainer Github</a>
   ~
   ~ The MIT License
   ~
@@ -23,7 +23,7 @@
   ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
   ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   ~ THE SOFTWARE.
-  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+  -->
 
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -53,11 +53,12 @@
         android:elevation="4dp"
         />
 
-    <ProgressBar
+    <network.minter.bipwallet.internal.views.widgets.ColoredProgressBar
         android:id="@+id/progress"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:visibility="gone"
+        app:color="@color/colorPrimaryDark"
         app:layout_constraintBottom_toBottomOf="@id/user_avatar"
         app:layout_constraintEnd_toEndOf="@id/user_avatar"
         app:layout_constraintStart_toStartOf="@id/user_avatar"
@@ -65,9 +66,9 @@
         tools:visibility="visible"
         />
 
-    <Button
+    <network.minter.bipwallet.internal.views.widgets.WalletButton
         android:id="@+id/action"
-        style="@style/Wallet.Button.White.BlueBorder"
+        style="@style/Wallet.Button.Transparent.BlueBorder"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_inset"

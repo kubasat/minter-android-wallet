@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2018 by MinterTeam
-  ~ @link https://github.com/MinterTeam
+  ~ Copyright (C) by MinterTeam. 2018
+  ~ @link <a href="https://github.com/MinterTeam">Org Github</a>
+  ~ @link <a href="https://github.com/edwardstock">Maintainer Github</a>
   ~
   ~ The MIT License
   ~
@@ -35,9 +36,10 @@
     android:minHeight="64dp"
     >
 
-    <ProgressBar
+    <network.minter.bipwallet.internal.views.widgets.ColoredProgressBar
         android:layout_width="33dp"
         android:layout_height="33dp"
+        app:color="@color/colorPrimaryDark"
         app:layout_constraintBottom_toTopOf="@id/sep"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -1,6 +1,7 @@
-/*
- * Copyright (C) 2018 by MinterTeam
+/*******************************************************************************
+ * Copyright (C) by MinterTeam. 2018
  * @link https://github.com/MinterTeam
+ * @link https://github.com/edwardstock
  *
  * The MIT License
  *
@@ -21,29 +22,20 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- */
+ ******************************************************************************/
 
-package network.minter.bipwallet.internal.exceptions;
+package network.minter.bipwallet.tx.adapters.vh;
 
-import network.minter.my.models.MyResult;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 /**
- * Dogsy. 2018
+ * minter-android-wallet. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
-public final class MyResponseException extends RuntimeException {
-    private MyResult.Error mError;
-
-    public MyResponseException(MyResult.Error error) {
-        mError = error;
-    }
-
-    public MyResponseException(MyResult<?> result) {
-        this(result.getError());
-    }
-
-    public MyResult.Error getError() {
-        return mError;
+public final class TxProgressViewHolder extends RecyclerView.ViewHolder {
+    public TxProgressViewHolder(View itemView) {
+        super(itemView);
     }
 }

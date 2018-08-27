@@ -1,7 +1,7 @@
-/*******************************************************************************
+/*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
- * @link https://github.com/edwardstock
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -22,7 +22,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- ******************************************************************************/
+ */
 
 package network.minter.bipwallet.exchange.ui;
 
@@ -41,13 +41,12 @@ import network.minter.bipwallet.R;
 import network.minter.bipwallet.internal.dialogs.WalletDialog;
 import network.minter.bipwallet.internal.dialogs.WalletDialogBuilder;
 import network.minter.bipwallet.internal.views.widgets.BipCircleImageView;
-import network.minter.my.MyMinterApi;
+import network.minter.profile.MinterProfileApi;
 
 import static network.minter.bipwallet.internal.common.Preconditions.checkNotNull;
 
 /**
  * minter-android-wallet. 2018
- *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class WalletTxConvertStartDialog extends WalletDialog {
@@ -58,6 +57,7 @@ public class WalletTxConvertStartDialog extends WalletDialog {
     @BindView(R.id.tx_to_coin_name) TextView toCoinName;
     @BindView(R.id.action_confirm) Button actionConfirm;
     @BindView(R.id.action_decline) Button actionDecline;
+    @BindView(R.id.dialog_amount_label) TextView amountLabel;
 
     private Builder mBuilder;
 
@@ -72,11 +72,19 @@ public class WalletTxConvertStartDialog extends WalletDialog {
         setContentView(R.layout.wallet_tx_convert_start_dialog);
         ButterKnife.bind(this);
         title.setText(mBuilder.getTitle());
-        amount.setText(mBuilder.mAmount);
+
+        if (mBuilder.mAmountPostfix != null && mBuilder.mAmountPostfix.length() > 0) {
+            amount.setText(String.format("%s %s", mBuilder.mAmount, mBuilder.mAmountPostfix));
+        } else {
+            amount.setText(mBuilder.mAmount);
+        }
         fromCoinAvatar.setImageUrlFallback(mBuilder.mFromCoinAvatar, R.drawable.img_avatar_default);
         toCoinAvatar.setImageUrlFallback(mBuilder.mToCoinAvatar, R.drawable.img_avatar_default);
         fromCoinName.setText(mBuilder.mFromCoin);
         toCoinName.setText(mBuilder.mToCoin);
+        if (mBuilder.mLabel != null && mBuilder.mLabel.length() > 0) {
+            amountLabel.setText(mBuilder.mLabel);
+        }
 
         actionConfirm.setText(mBuilder.getPositiveTitle());
         actionConfirm.setOnClickListener(v -> {
@@ -99,6 +107,8 @@ public class WalletTxConvertStartDialog extends WalletDialog {
         private String mFromCoin, mToCoin;
         private String mFromCoinAvatar, mToCoinAvatar;
         private String mAmount;
+        private CharSequence mLabel;
+        private CharSequence mAmountPostfix;
 
         public Builder(Context context) {
             super(context);
@@ -124,9 +134,14 @@ public class WalletTxConvertStartDialog extends WalletDialog {
             return super.setAction(BUTTON_POSITIVE, title, listener);
         }
 
+        public Builder setAmountPostfix(CharSequence postfix) {
+            mAmountPostfix = postfix;
+            return this;
+        }
+
         public Builder setFromCoin(String fromCoin) {
             mFromCoin = fromCoin;
-            setFromCoinAvatar(MyMinterApi.getCoinAvatarUrl(fromCoin));
+            setFromCoinAvatar(MinterProfileApi.getCoinAvatarUrl(fromCoin));
             return this;
         }
 
@@ -138,7 +153,7 @@ public class WalletTxConvertStartDialog extends WalletDialog {
 
         public Builder setToCoin(String toCoin) {
             mToCoin = toCoin;
-            setToCoinAvatar(MyMinterApi.getCoinAvatarUrl(toCoin));
+            setToCoinAvatar(MinterProfileApi.getCoinAvatarUrl(toCoin));
             return this;
         }
 
@@ -175,7 +190,12 @@ public class WalletTxConvertStartDialog extends WalletDialog {
 
             mToCoin = mToCoin.toUpperCase();
             mFromCoin = mFromCoin.toUpperCase();
-            return new WalletTxConvertStartDialog(mContext, this);
+            return new WalletTxConvertStartDialog(getContext(), this);
+        }
+
+        public Builder setLabel(CharSequence label) {
+            mLabel = label;
+            return this;
         }
     }
 }

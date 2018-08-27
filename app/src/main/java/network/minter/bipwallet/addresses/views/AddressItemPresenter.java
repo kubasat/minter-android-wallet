@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2018 by MinterTeam
+ * Copyright (C) by MinterTeam. 2018
  * @link https://github.com/MinterTeam
+ * @link https://github.com/edwardstock
  *
  * The MIT License
  *
@@ -41,9 +42,9 @@ import network.minter.bipwallet.addresses.ui.AddressItemActivity;
 import network.minter.bipwallet.internal.helpers.ContextHelper;
 import network.minter.bipwallet.internal.helpers.IntentHelper;
 import network.minter.bipwallet.internal.mvp.MvpBasePresenter;
-import network.minter.my.repo.MyAddressRepository;
+import network.minter.profile.repo.ProfileAddressRepository;
 
-import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
+import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallProfile;
 
 /**
  * MinterWallet. 2018
@@ -52,7 +53,7 @@ import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
  */
 @InjectViewState
 public class AddressItemPresenter extends MvpBasePresenter<AddressManageModule.AddressItemView> {
-    @Inject MyAddressRepository addressRepo;
+    @Inject ProfileAddressRepository addressRepo;
 
     private AddressItem mAddress;
 
@@ -64,6 +65,8 @@ public class AddressItemPresenter extends MvpBasePresenter<AddressManageModule.A
     public void handleExtras(Intent intent) {
         super.handleExtras(intent);
         mAddress = IntentHelper.getParcelExtraOrError(intent, AddressItemActivity.EXTRA_ADDRESS_DATA, "AddressItem required");
+        String name = intent.getStringExtra(AddressItemActivity.EXTRA_ADDRESS_NAME);
+        getViewState().setName(name);
 
         if (!mAddress.isServerSecured) {
             getViewState().hideActions();
@@ -92,7 +95,7 @@ public class AddressItemPresenter extends MvpBasePresenter<AddressManageModule.A
     private void onClickDeleteAddress(DialogInterface dialogInterface, int which) {
         getViewState().showProgress("Deleting in progress");
         if (mAddress.isServerSecured) {
-            rxCallMy(addressRepo.delete(mAddress.id))
+            rxCallProfile(addressRepo.delete(mAddress.id))
                     .observeOn(Schedulers.io())
                     .subscribeOn(Schedulers.io())
                     .subscribe(res -> {

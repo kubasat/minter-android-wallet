@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2018 by MinterTeam
- * @link https://github.com/MinterTeam
+ * Copyright (C) by MinterTeam. 2018
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -28,6 +29,7 @@ package network.minter.bipwallet.addresses.views;
 import android.arch.paging.PagedList;
 import android.arch.paging.RxPagedListBuilder;
 import android.content.Intent;
+import android.view.View;
 
 import com.arellomobile.mvp.InjectViewState;
 
@@ -41,10 +43,10 @@ import network.minter.bipwallet.addresses.models.AddressItem;
 import network.minter.bipwallet.advanced.repo.SecretStorage;
 import network.minter.bipwallet.internal.auth.AuthSession;
 import network.minter.bipwallet.internal.mvp.MvpBasePresenter;
-import network.minter.explorerapi.repo.ExplorerAddressRepository;
-import network.minter.my.repo.MyAddressRepository;
+import network.minter.explorer.repo.ExplorerAddressRepository;
+import network.minter.profile.repo.ProfileAddressRepository;
 
-import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
+import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallProfile;
 
 /**
  * MinterWallet. 2018
@@ -57,7 +59,7 @@ public class AddressListPresenter extends MvpBasePresenter<AddressManageModule.A
     private final static int REQUEST_FOR_RESULT = 200;
     @Inject SecretStorage secretRepo;
     @Inject AuthSession session;
-    @Inject MyAddressRepository myAddressRepo;
+    @Inject ProfileAddressRepository myAddressRepo;
     @Inject ExplorerAddressRepository explorerAddressRepository;
     private AddressListAdapter mAdapter;
     private RxPagedListBuilder<Integer, AddressItem> mPageBuilder;
@@ -66,8 +68,13 @@ public class AddressListPresenter extends MvpBasePresenter<AddressManageModule.A
     @Inject
     public AddressListPresenter() {
         mAdapter = new AddressListAdapter();
-        mAdapter.setOnAddressClickListener((v, address) -> getViewState().startAddressItem(REQUEST_ADDRESS_ITEM, address));
+        mAdapter.setOnAddressClickListener((v, name, address) -> getViewState().startAddressItem(REQUEST_ADDRESS_ITEM, name, address));
         mAdapter.setOnSetMainListener(this::onSetMain);
+        mAdapter.setOnBalanceClickListener(this::onClickBalance);
+    }
+
+    private void onClickBalance(View view, AddressItem addressItem) {
+        getViewState().startTransactionsList();
     }
 
     @Override
@@ -86,7 +93,7 @@ public class AddressListPresenter extends MvpBasePresenter<AddressManageModule.A
             secretStorage.add(secretData);
             boolean isMain = Stream.of(mItems).filter(item -> item.isMain).count() == 0;
             safeSubscribeIoToUi(
-                    rxCallMy(myAddressRepo.addAddress(secretData.toAddressData(isMain, true, secretStorage.getEncryptionKey())))
+                    rxCallProfile(myAddressRepo.addAddress(secretData.toAddressData(isMain, true, secretStorage.getEncryptionKey())))
             ).subscribe(res -> {
                 reload();
                 getViewState().hideProgress();
@@ -144,11 +151,11 @@ public class AddressListPresenter extends MvpBasePresenter<AddressManageModule.A
     }
 
     private void onSetMain(boolean isMain, AddressItem addressItem) {
-        if (!addressItem.isServerSecured || addressItem.myAddressData == null) {
+        if (!addressItem.isServerSecured || addressItem.profileAddressData == null) {
             return;
         }
 
-        safeSubscribeIoToUi(rxCallMy(myAddressRepo.setAddressMain(isMain, addressItem.myAddressData)))
+        safeSubscribeIoToUi(rxCallProfile(myAddressRepo.setAddressMain(isMain, addressItem.profileAddressData)))
                 .subscribe(res -> {
                     getViewState().scrollToPosition(0);
                     reload();

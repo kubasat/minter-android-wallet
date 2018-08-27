@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2018 by MinterTeam
- * @link https://github.com/MinterTeam
+ * Copyright (C) by MinterTeam. 2018
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -49,16 +50,20 @@ import network.minter.bipwallet.internal.helpers.DisplayHelper;
 import network.minter.bipwallet.internal.helpers.ImageHelper;
 import network.minter.bipwallet.internal.helpers.NetworkHelper;
 import network.minter.bipwallet.internal.storage.KVStorage;
-import network.minter.blockchainapi.repo.BlockChainAccountRepository;
-import network.minter.blockchainapi.repo.BlockChainCoinRepository;
-import network.minter.explorerapi.models.HistoryTransaction;
-import network.minter.explorerapi.repo.ExplorerAddressRepository;
-import network.minter.explorerapi.repo.ExplorerTransactionRepository;
-import network.minter.mintercore.internal.api.ApiService;
-import network.minter.my.repo.MyAddressRepository;
-import network.minter.my.repo.MyAuthRepository;
-import network.minter.my.repo.MyInfoRepository;
-import network.minter.my.repo.MyProfileRepository;
+import network.minter.bipwallet.sending.repo.RecipientAutocompleteStorage;
+import network.minter.bipwallet.services.livebalance.notification.BalanceNotificationManager;
+import network.minter.bipwallet.settings.repo.CachedMyProfileRepository;
+import network.minter.blockchain.repo.BlockChainAccountRepository;
+import network.minter.blockchain.repo.BlockChainCoinRepository;
+import network.minter.core.internal.api.ApiService;
+import network.minter.explorer.models.HistoryTransaction;
+import network.minter.explorer.repo.ExplorerAddressRepository;
+import network.minter.explorer.repo.ExplorerTransactionRepository;
+import network.minter.profile.models.User;
+import network.minter.profile.repo.ProfileAddressRepository;
+import network.minter.profile.repo.ProfileAuthRepository;
+import network.minter.profile.repo.ProfileInfoRepository;
+import network.minter.profile.repo.ProfileRepository;
 
 /**
  * MinterWallet. 2018
@@ -71,6 +76,7 @@ import network.minter.my.repo.MyProfileRepository;
         RepoModule.class,
         InjectorsModule.class,
         CacheModule.class,
+        NotificationModule.class,
 })
 @WalletApp
 public interface WalletComponent {
@@ -97,18 +103,23 @@ public interface WalletComponent {
     GsonBuilder gsonBuilder();
     CacheManager cache();
 
+    // notification
+    BalanceNotificationManager balanceNotifications();
+
     // repositories
     SecretStorage secretStorage();
     AccountStorage accountStorage();
+    RecipientAutocompleteStorage recipientStorage();
     CachedRepository<UserAccount, AccountStorage> accountStorageCache();
     ExplorerTransactionRepository explorerTransactionsRepo();
     CachedRepository<List<HistoryTransaction>, CachedExplorerTransactionRepository> explorerTransactionsRepoCache();
-    MyAuthRepository authRepo();
-    MyInfoRepository infoRepo();
-    MyAddressRepository addressMyRepo();
+    CachedRepository<User.Data, CachedMyProfileRepository> profileCachedRepo();
+    ProfileAuthRepository authRepo();
+    ProfileInfoRepository infoRepo();
+    ProfileAddressRepository addressMyRepo();
     ExplorerAddressRepository addressExplorerRepo();
 
-    MyProfileRepository profileRepo();
+    ProfileRepository profileRepo();
     BlockChainAccountRepository accountRepoBlockChain();
     BlockChainCoinRepository coinRepoBlockChain();
 }

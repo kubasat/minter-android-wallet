@@ -1,7 +1,7 @@
-/*******************************************************************************
+/*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
- * @link https://github.com/edwardstock
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -22,7 +22,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- ******************************************************************************/
+ */
 
 package network.minter.bipwallet.internal;
 
@@ -33,16 +33,17 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.util.Collections;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.functions.Function;
-import network.minter.blockchainapi.MinterBlockChainApi;
-import network.minter.blockchainapi.models.BCResult;
-import network.minter.explorerapi.MinterExplorerApi;
-import network.minter.explorerapi.models.ExpResult;
-import network.minter.my.MyMinterApi;
-import network.minter.my.models.MyResult;
+import network.minter.blockchain.MinterBlockChainApi;
+import network.minter.blockchain.models.BCResult;
+import network.minter.explorer.MinterExplorerApi;
+import network.minter.explorer.models.ExpResult;
+import network.minter.profile.MinterProfileApi;
+import network.minter.profile.models.ProfileResult;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.HttpException;
@@ -57,12 +58,12 @@ import timber.log.Timber;
 public class ReactiveAdapter {
 
     // MyMinter
-    public static <T> Observable<T> rxCallMy(Call<T> call) {
+    public static <T> Observable<T> rxCallProfile(Call<T> call) {
         return Observable.create(emitter -> call.clone().enqueue(new Callback<T>() {
             @Override
             public void onResponse(@NonNull Call<T> call1, @NonNull Response<T> response) {
                 if (response.body() == null) {
-                    emitter.onNext((T) createMyErrorResult(response));
+                    emitter.onNext((T) createProfileErrorResult(response));
                 } else {
                     emitter.onNext(response.body());
                 }
@@ -77,24 +78,37 @@ public class ReactiveAdapter {
         }));
     }
 
-    public static <T> Function<? super Throwable, ? extends ObservableSource<? extends MyResult<T>>> convertToMyErrorResult() {
-        return (Function<Throwable, ObservableSource<? extends MyResult<T>>>) throwable
+    public static <T> Function<? super Throwable, ? extends ObservableSource<? extends ProfileResult<T>>> convertToProfileErrorResult() {
+        return (Function<Throwable, ObservableSource<? extends ProfileResult<T>>>) throwable
                 -> {
             if (!(throwable instanceof HttpException)) {
                 return Observable.error(throwable);
             }
 
-            return Observable.just(createMyErrorResult(((HttpException) throwable)));
+            return Observable.just(createProfileErrorResult(((HttpException) throwable)));
         };
     }
 
-    public static <T> MyResult<T> createMyErrorResult(final String json) {
-        Gson gson = MyMinterApi.getInstance().getGsonBuilder().create();
-        return gson.fromJson(json, new TypeToken<MyResult<T>>() {
-        }.getType());
+    public static <T> ProfileResult<T> createProfileErrorResult(final String json) {
+        Gson gson = MinterProfileApi.getInstance().getGsonBuilder().create();
+
+        ProfileResult<T> out;
+        try {
+            out = gson.fromJson(json, new TypeToken<ProfileResult<T>>() {
+            }.getType());
+        } catch (Exception e) {
+            out = new ProfileResult<>();
+            out.error = new ProfileResult.Error();
+            out.error.message = "Invalid response";
+            out.error.code = "500";
+            out.error.data = Collections.emptyMap();
+            out.data = null;
+        }
+
+        return out;
     }
 
-    public static <T> MyResult<T> createMyErrorResult(final Response<T> response) {
+    public static <T> ProfileResult<T> createProfileErrorResult(final Response<T> response) {
         final String errorBodyString;
         try {
             // нельзя после этой строки пытаться вытащить body из ошибки,
@@ -103,13 +117,13 @@ public class ReactiveAdapter {
             errorBodyString = response.errorBody().string();
         } catch (IOException e) {
             Timber.e(e, "Unable to resolve http exception response");
-            return createMyEmpty();
+            return createProfileEmpty();
         }
 
-        return createMyErrorResult(errorBodyString);
+        return createProfileErrorResult(errorBodyString);
     }
 
-    public static <T> MyResult<T> createMyErrorResult(final HttpException exception) {
+    public static <T> ProfileResult<T> createProfileErrorResult(final HttpException exception) {
         final String errorBodyString;
         try {
             // нельзя после этой строки пытаться вытащить body из ошибки,
@@ -118,14 +132,14 @@ public class ReactiveAdapter {
             errorBodyString = ((HttpException) exception).response().errorBody().string();
         } catch (IOException e) {
             Timber.e(e, "Unable to resolve http exception response");
-            return createMyEmpty();
+            return createProfileEmpty();
         }
 
-        return createMyErrorResult(errorBodyString);
+        return createProfileErrorResult(errorBodyString);
     }
 
-    public static <T> MyResult<T> createMyEmpty() {
-        return new MyResult<>();
+    public static <T> ProfileResult<T> createProfileEmpty() {
+        return new ProfileResult<>();
     }
 
 
@@ -172,10 +186,29 @@ public class ReactiveAdapter {
         };
     }
 
+    public static <T> BCResult<T> createBcErrorResultMessage(final String errorMessage, BCResult.ResultCode code, int statusCode) {
+        BCResult<T> errorRes = new BCResult<>();
+        errorRes.message = errorMessage;
+        errorRes.statusCode = statusCode;
+        errorRes.code = code;
+        return errorRes;
+    }
+
     public static <T> BCResult<T> createBcErrorResult(final String json) {
         Gson gson = MinterBlockChainApi.getInstance().getGsonBuilder().create();
-        return gson.fromJson(json, new TypeToken<BCResult<T>>() {
-        }.getType());
+
+        BCResult<T> out;
+        try {
+            out = gson.fromJson(json, new TypeToken<BCResult<T>>() {
+            }.getType());
+        } catch (Exception e) {
+            out = new BCResult<>();
+            out.code = BCResult.ResultCode.Unknown;
+            out.message = "Invalid response";
+            out.statusCode = 500;
+        }
+
+        return out;
     }
 
     public static <T> BCResult<T> createBcErrorResult(final Response<T> response) {
@@ -250,8 +283,15 @@ public class ReactiveAdapter {
 
     public static <T> ExpResult<T> createExpErrorResult(final String json) {
         Gson gson = MinterExplorerApi.getInstance().getGsonBuilder().create();
-        return gson.fromJson(json, new TypeToken<ExpResult<T>>() {
-        }.getType());
+        ExpResult<T> out;
+        try {
+            out = gson.fromJson(json, new TypeToken<ExpResult<T>>() {
+            }.getType());
+        } catch (Exception e) {
+            out = new ExpResult<>();
+        }
+
+        return out;
     }
 
     public static <T> ExpResult<T> createExpErrorResult(final Response<T> response) {

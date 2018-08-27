@@ -1,7 +1,7 @@
-/*******************************************************************************
+/*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
- * @link https://github.com/edwardstock
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -22,7 +22,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- ******************************************************************************/
+ */
 
 package network.minter.bipwallet.internal;
 
@@ -53,27 +53,27 @@ import network.minter.bipwallet.internal.di.WalletComponent;
 import network.minter.bipwallet.internal.di.WalletModule;
 import network.minter.bipwallet.internal.mvp.ErrorView;
 import network.minter.bipwallet.internal.mvp.ProgressView;
-import network.minter.mintercore.internal.exceptions.NetworkException;
+import network.minter.core.internal.exceptions.NetworkException;
 import timber.log.Timber;
 
 import static network.minter.bipwallet.internal.common.Preconditions.firstNonNull;
 
 /**
  * MinterWallet. 2018
- *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class Wallet extends MultiDexApplication implements HasActivityInjector, HasServiceInjector {
 
     public static final Locale LC_EN = Locale.US;
-    public static final Locale LC_RU = new Locale("ru", "RU");
-    public final static boolean ENABLE_CRASHLYTICS = BuildConfig.FLAVOR.equalsIgnoreCase("dev") || BuildConfig.FLAVOR.equalsIgnoreCase("prod");
+    @SuppressWarnings("ConstantConditions")
+    public final static boolean ENABLE_CRASHLYTICS = BuildConfig.FLAVOR.equalsIgnoreCase("netTest") || BuildConfig.FLAVOR.equalsIgnoreCase("netMain");
     private static WalletComponent app;
 
     static {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         }
+        Locale.setDefault(LC_EN);
     }
 
     @Inject
@@ -86,12 +86,18 @@ public class Wallet extends MultiDexApplication implements HasActivityInjector, 
      * <p>
      * Wallet.app().display().getWidth()
      * Wallet.app().res(); et cetera
-     *
-     * @return
+     * @return WalletComponent
      * @see WalletComponent
      */
     public static WalletComponent app() {
         return app;
+    }
+
+    private static boolean isChinese() {
+        return Locale.getDefault() == Locale.CHINA ||
+                Locale.getDefault() == Locale.CHINESE ||
+                Locale.getDefault() == Locale.SIMPLIFIED_CHINESE ||
+                Locale.getDefault() == Locale.TRADITIONAL_CHINESE;
     }
 
     @Override
@@ -128,27 +134,6 @@ public class Wallet extends MultiDexApplication implements HasActivityInjector, 
     @Override
     public AndroidInjector<Service> serviceInjector() {
         return dispatchingServiceInjector;
-    }
-
-    public class CrashlyticsTree extends Timber.Tree {
-        private static final String CRASHLYTICS_KEY_PRIORITY = "priority";
-        private static final String CRASHLYTICS_KEY_TAG = "tag";
-        private static final String CRASHLYTICS_KEY_MESSAGE = "message";
-
-        @Override
-        protected void log(int priority, String tag, String message, Throwable t) {
-            if (priority == Log.ERROR || priority == Log.WARN) {
-                Crashlytics.setInt(CRASHLYTICS_KEY_PRIORITY, priority);
-                Crashlytics.setString(CRASHLYTICS_KEY_TAG, tag);
-                Crashlytics.setString(CRASHLYTICS_KEY_MESSAGE, message);
-
-                if (t == null) {
-                    Crashlytics.logException(new Exception(message));
-                } else {
-                    Crashlytics.logException(t);
-                }
-            }
-        }
     }
 
     public static class Rx {
@@ -222,7 +207,6 @@ public class Wallet extends MultiDexApplication implements HasActivityInjector, 
 
         /**
          * Выведет человеческую ошибку и запишет ее в лог
-         *
          * @param message Если передать NULL то ошибка не выведется
          */
         public static Consumer<Throwable> errorHandler(final Object viewContext, final String message) {
@@ -256,6 +240,27 @@ public class Wallet extends MultiDexApplication implements HasActivityInjector, 
                     tAction.accept(throwable);
                 }
             };
+        }
+    }
+
+    public class CrashlyticsTree extends Timber.Tree {
+        private static final String CRASHLYTICS_KEY_PRIORITY = "priority";
+        private static final String CRASHLYTICS_KEY_TAG = "tag";
+        private static final String CRASHLYTICS_KEY_MESSAGE = "message";
+
+        @Override
+        protected void log(int priority, String tag, String message, Throwable t) {
+            if (priority == Log.ERROR || priority == Log.WARN) {
+                Crashlytics.setInt(CRASHLYTICS_KEY_PRIORITY, priority);
+                Crashlytics.setString(CRASHLYTICS_KEY_TAG, tag);
+                Crashlytics.setString(CRASHLYTICS_KEY_MESSAGE, message);
+
+                if (t == null) {
+                    Crashlytics.logException(new Exception(message));
+                } else {
+                    Crashlytics.logException(t);
+                }
+            }
         }
     }
 }

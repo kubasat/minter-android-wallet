@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<!--
   ~ Copyright (C) by MinterTeam. 2018
-  ~ @link https://github.com/MinterTeam
-  ~ @link https://github.com/edwardstock
+  ~ @link <a href="https://github.com/MinterTeam">Org Github</a>
+  ~ @link <a href="https://github.com/edwardstock">Maintainer Github</a>
   ~
   ~ The MIT License
   ~
@@ -23,7 +23,7 @@
   ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
   ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   ~ THE SOFTWARE.
-  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+  -->
 
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -55,8 +55,8 @@
             app:enableAction="false"
             app:layout_collapseMode="none"
             app:navigationIcon="@drawable/ic_arrow_back_white_compat"
-            app:title="@string/title_signin"
             app:progressColor="@color/white"
+            app:title="@string/title_signin"
             app:titleTextColor="@android:color/white"
             />
     </android.support.design.widget.AppBarLayout>
@@ -65,7 +65,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
-        android:paddingBottom="@dimen/margin_edges"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -75,16 +74,16 @@
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="@dimen/margin_edges"
-            android:paddingTop="@dimen/margin_edges"
-            android:paddingEnd="@dimen/margin_edges"
+            android:paddingTop="@dimen/margin_edges_half"
             >
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/layout_input_username"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_edges"
+                android:layout_marginStart="@dimen/margin_edges_input"
+                android:layout_marginTop="@dimen/margin_edges_medium"
+                android:layout_marginEnd="@dimen/margin_edges_input"
                 android:hint="@string/input_signin_username"
                 app:hintAnimationEnabled="true"
                 app:hintEnabled="true"
@@ -96,15 +95,14 @@
                 >
 
                 <network.minter.bipwallet.internal.views.text.PrefixEditText
-                    android:tag="username"
                     android:id="@+id/input_username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="-3dp"
-                    android:layout_marginEnd="-3dp"
-                    android:inputType="text"
-                    android:text="\@"
                     android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:tag="username"
+                    android:text="\@"
+                    android:textSize="@dimen/text_size_default"
                     />
 
             </android.support.design.widget.TextInputLayout>
@@ -113,7 +111,9 @@
                 android:id="@+id/layout_input_password"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_edges"
+                android:layout_marginStart="@dimen/margin_edges_input"
+                android:layout_marginTop="@dimen/margin_edges_medium"
+                android:layout_marginEnd="@dimen/margin_edges_input"
                 android:hint="@string/input_signin_password"
                 app:hintAnimationEnabled="true"
                 app:hintEnabled="true"
@@ -126,21 +126,22 @@
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/input_password"
-                    android:tag="password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="-3dp"
-                    android:layout_marginEnd="-3dp"
                     android:imeOptions="actionSend"
                     android:inputType="text|textPassword"
+                    android:tag="password"
+                    android:textSize="@dimen/text_size_default"
                     />
             </android.support.design.widget.TextInputLayout>
 
-            <Button
+            <network.minter.bipwallet.internal.views.widgets.WalletButton
                 android:id="@+id/action"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_edges"
                 android:layout_marginTop="@dimen/margin_edges_large"
+                android:layout_marginEnd="@dimen/margin_edges"
                 android:enabled="false"
                 android:text="@string/btn_continue"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -152,13 +153,23 @@
                 android:id="@+id/error_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_edges"
+                android:layout_marginTop="@dimen/margin_edges"
+                android:layout_marginEnd="@dimen/margin_edges"
+                android:textAlignment="center"
                 android:textColor="@color/errorColor"
                 android:visibility="gone"
-                android:textAlignment="center"
-                android:layout_marginTop="@dimen/margin_edges"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/action"
+                />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="@dimen/margin_edges"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/error_text"
                 />
 
         </android.support.constraint.ConstraintLayout>

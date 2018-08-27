@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2018 by MinterTeam
- * @link https://github.com/MinterTeam
+ * Copyright (C) by MinterTeam. 2018
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -33,7 +34,7 @@ import com.arellomobile.mvp.MvpView;
 
 import dagger.Module;
 import network.minter.bipwallet.internal.mvp.ErrorViewWithRetry;
-import network.minter.mintercore.crypto.MinterAddress;
+import network.minter.core.crypto.MinterAddress;
 
 /**
  * MinterWallet. 2018
@@ -52,5 +53,6 @@ public class ReceiveTabModule {
         void showQRProgress();
         void hideQRProgress();
         void startShare(Intent intent);
+        void setOnClickAddress(View.OnClickListener listener);
     }
 }

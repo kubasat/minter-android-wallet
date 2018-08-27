@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2018 by MinterTeam
- * @link https://github.com/MinterTeam
+ * Copyright (C) by MinterTeam. 2018
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -52,7 +53,7 @@ import network.minter.bipwallet.home.HomeModule;
 import network.minter.bipwallet.home.HomeTabFragment;
 import network.minter.bipwallet.receiving.ReceiveTabModule.ReceiveTabView;
 import network.minter.bipwallet.receiving.views.ReceiveTabPresenter;
-import network.minter.mintercore.crypto.MinterAddress;
+import network.minter.core.crypto.MinterAddress;
 
 /**
  * MinterWallet. 2018
@@ -133,6 +134,11 @@ public class ReceiveTabFragment extends HomeTabFragment implements ReceiveTabVie
     @Override
     public void startShare(Intent intent) {
         getActivity().startActivity(intent);
+    }
+
+    @Override
+    public void setOnClickAddress(View.OnClickListener listener) {
+        address.setOnClickListener(listener);
     }
 
     @Override

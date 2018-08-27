@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2018 by MinterTeam
- * @link https://github.com/MinterTeam
+ * Copyright (C) by MinterTeam. 2018
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -48,6 +49,7 @@ import network.minter.bipwallet.addresses.views.AddressListPresenter;
 import network.minter.bipwallet.advanced.ui.AdvancedMainActivity;
 import network.minter.bipwallet.internal.BaseMvpInjectActivity;
 import network.minter.bipwallet.internal.views.list.NonScrollableLinearLayoutManager;
+import network.minter.bipwallet.tx.ui.TransactionListActivity;
 
 /**
  * MinterWallet. 2018
@@ -69,8 +71,8 @@ public class AddressListActivity extends BaseMvpInjectActivity implements Addres
     }
 
     @Override
-    public void startAddressItem(int requestCode, AddressItem address) {
-        new AddressItemActivity.Builder(this, address).start(requestCode);
+    public void startAddressItem(int requestCode, String name, AddressItem address) {
+        new AddressItemActivity.Builder(this, address).setName(name).start(requestCode);
     }
 
     @Override
@@ -100,6 +102,12 @@ public class AddressListActivity extends BaseMvpInjectActivity implements Addres
     @Override
     public void scrollToPosition(int position) {
         list.scrollToPosition(position);
+    }
+
+    @Override
+    public void startTransactionsList() {
+        new TransactionListActivity.Builder(this)
+                .start();
     }
 
     @Override

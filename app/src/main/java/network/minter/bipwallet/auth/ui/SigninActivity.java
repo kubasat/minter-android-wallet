@@ -1,7 +1,7 @@
-/*******************************************************************************
+/*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
- * @link https://github.com/edwardstock
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -22,7 +22,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- ******************************************************************************/
+ */
 
 package network.minter.bipwallet.auth.ui;
 
@@ -51,8 +51,12 @@ import network.minter.bipwallet.auth.views.SigninPresenter;
 import network.minter.bipwallet.home.ui.HomeActivity;
 import network.minter.bipwallet.internal.BaseMvpInjectActivity;
 import network.minter.bipwallet.internal.helpers.KeyboardHelper;
+import network.minter.bipwallet.internal.helpers.forms.InputGroup;
+import network.minter.bipwallet.internal.helpers.forms.validators.MinterUsernameValidator;
 import network.minter.bipwallet.internal.helpers.forms.validators.RegexValidator;
 import network.minter.bipwallet.internal.views.widgets.ToolbarProgress;
+
+import static android.support.v4.content.res.ResourcesCompat.getFont;
 
 /**
  * MinterWallet. 2018
@@ -78,10 +82,12 @@ public class SigninActivity extends BaseMvpInjectActivity implements AuthModule.
     @Override
     public void setOnSubmit(View.OnClickListener listener) {
         action.setOnClickListener(listener);
-
         usernameLayout.setNextFocusDownId(R.id.layout_input_password);
         passwordLayout.getEditText().setOnEditorActionListener((textView, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_SEND || event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+            if (actionId == EditorInfo.IME_ACTION_SEND) {
+                listener.onClick(textView);
+                return true;
+            } else if (event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
                 listener.onClick(textView);
                 return true;
             }
@@ -154,10 +160,12 @@ public class SigninActivity extends BaseMvpInjectActivity implements AuthModule.
         ButterKnife.bind(this);
         setupToolbar(toolbar);
 
+        passwordLayout.setTypeface(getFont(this, R.font._ubuntu_regular));
+
         mInputGroup = new InputGroup();
         mInputGroup.addInput(usernameLayout);
         mInputGroup.addInput(passwordLayout);
-        mInputGroup.addValidator(usernameLayout, new RegexValidator("^@[a-zA-Z0-9_]{5,32}$", getString(R.string.input_signin_username_invalid)));
-        mInputGroup.addValidator(passwordLayout, new RegexValidator(".{6,}", getString(R.string.input_signin_password_invalid)));
+        mInputGroup.addValidator(usernameLayout, new MinterUsernameValidator(getString(R.string.input_username_invalid)));
+        mInputGroup.addValidator(passwordLayout, new RegexValidator(".{6,}", getString(R.string.input_password_invalid)));
     }
 }

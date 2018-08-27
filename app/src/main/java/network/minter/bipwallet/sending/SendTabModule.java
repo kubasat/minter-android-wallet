@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2018 by MinterTeam
- * @link https://github.com/MinterTeam
+ * Copyright (C) by MinterTeam. 2018
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -33,10 +34,12 @@ import java.util.List;
 
 import dagger.Module;
 import network.minter.bipwallet.advanced.models.AccountItem;
-import network.minter.bipwallet.auth.ui.InputGroup;
 import network.minter.bipwallet.internal.dialogs.WalletDialog;
+import network.minter.bipwallet.internal.helpers.forms.InputGroup;
 import network.minter.bipwallet.internal.mvp.ErrorViewWithRetry;
 import network.minter.bipwallet.sending.account.AccountSelectedAdapter;
+import network.minter.bipwallet.sending.adapters.RecipientListAdapter;
+import network.minter.bipwallet.sending.models.RecipientItem;
 
 /**
  * MinterWallet. 2018
@@ -48,6 +51,7 @@ public class SendTabModule {
 
     public interface SendView extends MvpView, ErrorViewWithRetry {
         void setOnClickAccountSelectedListener(View.OnClickListener listener);
+        void setOnClickMaximum(View.OnClickListener listener);
         void setOnTextChangedListener(InputGroup.OnTextChangedListener listener);
         void setFormValidationListener(InputGroup.OnFormValidateListener listener);
         void startAccountSelector(List<AccountItem> accounts, AccountSelectedAdapter.OnClickListener clickListener);
@@ -62,6 +66,11 @@ public class SendTabModule {
         void startScanQRWithPermissions(int requestCode);
         void setRecipient(CharSequence to);
         void setRecipientError(CharSequence error);
+        void setAmountError(CharSequence error);
+        void setError(CharSequence error);
+        void setAmount(CharSequence amount);
+        void setFee(CharSequence fee);
+        void setRecipientsAutocomplete(List<RecipientItem> items, RecipientListAdapter.OnItemClickListener listener);
     }
 
     public static class TxData {

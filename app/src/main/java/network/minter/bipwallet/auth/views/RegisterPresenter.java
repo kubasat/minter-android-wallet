@@ -1,7 +1,7 @@
-/*******************************************************************************
+/*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
- * @link https://github.com/edwardstock
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -22,7 +22,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- ******************************************************************************/
+ */
 
 package network.minter.bipwallet.auth.views;
 
@@ -41,18 +41,18 @@ import network.minter.bipwallet.R;
 import network.minter.bipwallet.advanced.models.SecretData;
 import network.minter.bipwallet.advanced.repo.SecretStorage;
 import network.minter.bipwallet.auth.AuthModule;
-import network.minter.bipwallet.auth.ui.InputGroup;
 import network.minter.bipwallet.internal.Wallet;
 import network.minter.bipwallet.internal.auth.AuthSession;
 import network.minter.bipwallet.internal.di.annotations.ActivityScope;
+import network.minter.bipwallet.internal.helpers.forms.InputGroup;
 import network.minter.bipwallet.internal.mvp.MvpBasePresenter;
-import network.minter.my.models.LoginData;
-import network.minter.my.models.ProfileRequestResult;
-import network.minter.my.models.RegisterData;
-import network.minter.my.repo.MyAuthRepository;
+import network.minter.profile.models.LoginData;
+import network.minter.profile.models.ProfileRequestResult;
+import network.minter.profile.models.RegisterData;
+import network.minter.profile.repo.ProfileAuthRepository;
 
-import static network.minter.bipwallet.internal.ReactiveAdapter.convertToMyErrorResult;
-import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
+import static network.minter.bipwallet.internal.ReactiveAdapter.convertToProfileErrorResult;
+import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallProfile;
 
 /**
  * MinterWallet. 2018
@@ -62,7 +62,7 @@ import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
 @ActivityScope
 @InjectViewState
 public class RegisterPresenter extends MvpBasePresenter<AuthModule.RegisterView> {
-    @Inject MyAuthRepository authRepo;
+    @Inject ProfileAuthRepository authRepo;
     @Inject SecretStorage secretStorage;
     @Inject AuthSession session;
 
@@ -115,6 +115,7 @@ public class RegisterPresenter extends MvpBasePresenter<AuthModule.RegisterView>
             return;
         }
 
+        getViewState().setEnableSubmit(false);
         getViewState().hideKeyboard();
         getViewState().clearErrors();
         getViewState().showProgress();
@@ -127,16 +128,19 @@ public class RegisterPresenter extends MvpBasePresenter<AuthModule.RegisterView>
         } catch (Throwable t) {
             getViewState().onError(t);
             secretStorage.destroy();
+            getViewState().setEnableSubmit(true);
+            getViewState().hideProgress();
             return;
         }
 
-        rxCallMy(authRepo.register(mRegisterData.preparePassword()))
+        rxCallProfile(authRepo.register(mRegisterData.preparePassword()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .onErrorResumeNext(convertToMyErrorResult())
+                .onErrorResumeNext(convertToProfileErrorResult())
                 .subscribe(userResult -> {
                     if(!userResult.isSuccess()) {
                         secretStorage.destroy();
+                        getViewState().setEnableSubmit(true);
                         getViewState().hideProgress();
                         getViewState().setResultError(userResult.error.message);
                         getViewState().setInputErrors(userResult.getError().getData());
@@ -158,10 +162,11 @@ public class RegisterPresenter extends MvpBasePresenter<AuthModule.RegisterView>
                     loginData.username = mRegisterData.username;
                     loginData.password = mRegisterData.password;
 
-                    safeSubscribeIoToUi(rxCallMy(authRepo.login(loginData)))
+                    safeSubscribeIoToUi(rxCallProfile(authRepo.login(loginData)))
                             .subscribe(loginResult -> {
                                 getViewState().hideProgress();
                                 if(!loginResult.isSuccess()) {
+                                    getViewState().setEnableSubmit(true);
                                     getViewState().setResultError(loginResult.error.message);
                                     getViewState().setInputErrors(loginResult.getError().getData());
                                     return;

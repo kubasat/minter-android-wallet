@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2018 by MinterTeam
- * @link https://github.com/MinterTeam
+ * Copyright (C) by MinterTeam. 2018
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -43,11 +44,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import network.minter.bipwallet.advanced.models.AccountItem;
 import network.minter.bipwallet.internal.Wallet;
-import network.minter.explorerapi.models.AddressData;
-import network.minter.explorerapi.repo.ExplorerAddressRepository;
-import network.minter.mintercore.crypto.MinterAddress;
+import network.minter.core.crypto.MinterAddress;
+import network.minter.explorer.models.AddressData;
+import network.minter.explorer.repo.ExplorerAddressRepository;
 import timber.log.Timber;
 
+import static network.minter.bipwallet.internal.ReactiveAdapter.convertToExpErrorResult;
 import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallExp;
 
 /**
@@ -77,6 +79,7 @@ public class ExplorerBalanceFetcher implements ObservableOnSubscribe<List<Accoun
         return rxCallExp(addressRepository.getAddressData(address))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
+                .onErrorResumeNext(convertToExpErrorResult())
                 .map(item -> {
                     Timber.d("Balance is really loaded");
                     return item.result.getTotalBalance();
@@ -95,13 +98,11 @@ public class ExplorerBalanceFetcher implements ObservableOnSubscribe<List<Accoun
 
         for (MinterAddress address : mAddresses) {
             rxCallExp(mAddressRepository.getAddressData(address))
+                    .onErrorResumeNext(convertToExpErrorResult())
                     .subscribeOn(Schedulers.io())
                     .subscribe(res -> {
                         synchronized (mLock) {
                             res.result.fillDefaultsOnEmpty();
-                            if (address == null) {
-                                Timber.w("Address is null!");
-                            }
                             mRawBalances.put(address, res.result);
                         }
 
@@ -109,6 +110,7 @@ public class ExplorerBalanceFetcher implements ObservableOnSubscribe<List<Accoun
                     }, t -> {
                         Wallet.Rx.errorHandler().accept(t);
                         mWaiter.countDown();
+                        emitter.onError(t);
                     });
         }
 
@@ -124,7 +126,8 @@ public class ExplorerBalanceFetcher implements ObservableOnSubscribe<List<Accoun
                         balance.getCoin(),
                         entry.getKey(),
                         balance.getAmount(),
-                        balance.getUsdAmount()
+                        balance.getUsdAmount(),
+                        balance.baseCoinAmount
                 ));
             }
         }

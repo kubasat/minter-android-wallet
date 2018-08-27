@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2018 by MinterTeam
+ * Copyright (C) by MinterTeam. 2018
  * @link https://github.com/MinterTeam
+ * @link https://github.com/edwardstock
  *
  * The MIT License
  *
@@ -38,17 +39,18 @@ import network.minter.bipwallet.advanced.repo.SecretStorage;
 import network.minter.bipwallet.advanced.ui.AdvancedMainActivity;
 import network.minter.bipwallet.internal.auth.AuthSession;
 import network.minter.bipwallet.internal.mvp.MvpBasePresenter;
-import network.minter.mintercore.bip39.NativeBip39;
-import network.minter.mintercore.crypto.MinterAddress;
-import network.minter.my.models.User;
-import network.minter.my.repo.MyAddressRepository;
+import network.minter.core.bip39.NativeBip39;
+import network.minter.core.crypto.MinterAddress;
+import network.minter.profile.models.User;
+import network.minter.profile.repo.ProfileAddressRepository;
 
-import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallMy;
+import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallProfile;
 
 /**
- * MinterWallet. 2018
+ * minter-android-wallet. 2018
  *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
+ * TODO: refactoring
  */
 @InjectViewState
 public class AdvancedMainPresenter extends MvpBasePresenter<AdvancedModeModule.MainView> {
@@ -57,7 +59,7 @@ public class AdvancedMainPresenter extends MvpBasePresenter<AdvancedModeModule.M
 
     @Inject SecretStorage repo;
     @Inject AuthSession session;
-    @Inject MyAddressRepository addressRepo;
+    @Inject ProfileAddressRepository addressRepo;
     private String mPhrase;
     private boolean mForResult;
 
@@ -89,7 +91,10 @@ public class AdvancedMainPresenter extends MvpBasePresenter<AdvancedModeModule.M
                 if (session.getRole() == AuthSession.AuthType.Basic) {
                     // if basic user, we adding address to local repo and to server
                     // here we ask password to encrypt seed and send to server, and then finishing with success result
-                    getViewState().askPassword((field, val) -> onPasswordConfirmed(field, val, address));
+                    getViewState().askPassword((dialog, field, val) -> {
+                        onPasswordConfirmed(val, address);
+                        dialog.dismiss();
+                    });
                 } else {
                     // if adding address in advanced mode, finishing with success result
                     if (mForResult) {
@@ -128,10 +133,10 @@ public class AdvancedMainPresenter extends MvpBasePresenter<AdvancedModeModule.M
         mForResult = intent.getBooleanExtra(AdvancedMainActivity.EXTRA_FOR_RESULT, false);
     }
 
-    private boolean onPasswordConfirmed(String fieldName, String value, final MinterAddress address) {
+    private boolean onPasswordConfirmed(String value, final MinterAddress address) {
         getViewState().showProgress(null, "Encrypting...");
         safeSubscribeIoToUi(
-                rxCallMy(addressRepo.addAddress(repo.getSecret(address).toAddressData(repo.getAddresses().isEmpty(), true, value)))
+                rxCallProfile(addressRepo.addAddress(repo.getSecret(address).toAddressData(repo.getAddresses().isEmpty(), true, value)))
         )
                 .retryWhen(getErrorResolver())
                 .subscribe(res -> {

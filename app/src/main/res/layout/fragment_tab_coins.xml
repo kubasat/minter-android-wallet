@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<!--
   ~ Copyright (C) by MinterTeam. 2018
-  ~ @link https://github.com/MinterTeam
-  ~ @link https://github.com/edwardstock
+  ~ @link <a href="https://github.com/MinterTeam">Org Github</a>
+  ~ @link <a href="https://github.com/edwardstock">Maintainer Github</a>
   ~
   ~ The MIT License
   ~
@@ -23,7 +23,7 @@
   ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
   ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   ~ THE SOFTWARE.
-  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+  -->
 
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -58,6 +58,7 @@
                 android:layout_height="match_parent">
 
                 <ImageView
+                    android:id="@+id/bip_logo"
                     android:layout_width="35dp"
                     android:layout_height="24dp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -68,15 +69,19 @@
 
                 <TextView
                     android:id="@+id/username"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/margin_edges"
+                    android:ellipsize="middle"
+                    android:singleLine="true"
+                    android:textAlignment="viewEnd"
                     android:textColor="@color/textColorWhite"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/user_avatar"
+                    app:layout_constraintStart_toEndOf="@id/bip_logo"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="\@username"
+                    tools:text="\@superwalletverylonglonglonglongl"
                     />
 
                 <network.minter.bipwallet.internal.views.widgets.BipCircleImageView
@@ -144,7 +149,7 @@
                         android:id="@+id/balance_title"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif"
+                        android:fontFamily="@font/_ubuntu_regular"
                         android:text="@string/tab_coins_title"
                         android:textColor="@color/textColorWhite"
                         android:textSize="15sp"
@@ -159,9 +164,9 @@
                         android:id="@+id/balance_int"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif"
+                        android:fontFamily="@font/_ubuntu_bold"
                         android:textColor="@color/textColorWhite"
-                        android:textSize="28sp"
+                        android:textSize="32sp"
                         android:textStyle="normal"
                         app:layout_constraintBottom_toTopOf="@id/space_bottom"
                         app:layout_constraintEnd_toStartOf="@id/balance_fractions"
@@ -177,10 +182,10 @@
                         android:id="@+id/balance_fractions"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="2dp"
-                        android:fontFamily="sans-serif"
+                        android:layout_marginStart="1dp"
+                        android:fontFamily="@font/_ubuntu_bold"
                         android:textColor="@color/textColorWhite"
-                        android:textSize="18sp"
+                        android:textSize="@dimen/text_size_20"
                         android:textStyle="normal"
                         app:layout_constraintBottom_toTopOf="@id/space_bottom"
                         app:layout_constraintEnd_toStartOf="@id/balance_coin_name"
@@ -191,14 +196,15 @@
                         />
 
                     <TextView
+                        android:fontFamily="@font/_ubuntu_bold"
                         android:id="@+id/balance_coin_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/margin_edges_half"
-                        android:fontFamily="sans-serif"
+                        android:textAllCaps="true"
                         android:text="bips"
                         android:textColor="@color/textColorWhite"
-                        android:textSize="18sp"
+                        android:textSize="@dimen/text_size_20"
                         android:textStyle="normal"
                         app:layout_constraintBottom_toTopOf="@id/space_bottom"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -227,15 +233,26 @@
             android:fillViewport="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/list"
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/container_swipe_refresh"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/white"
-                tools:itemCount="5"
-                tools:listitem="@layout/item_list_with_image">
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/appbar"
+                >
 
-            </android.support.v7.widget.RecyclerView>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    tools:itemCount="5"
+                    tools:listitem="@layout/item_list_with_image">
+                </android.support.v7.widget.RecyclerView>
+
+            </android.support.v4.widget.SwipeRefreshLayout>
         </android.support.v4.widget.NestedScrollView>
     </android.support.design.widget.CoordinatorLayout>
 

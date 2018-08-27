@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2018 by MinterTeam
+ * Copyright (C) by MinterTeam. 2018
  * @link https://github.com/MinterTeam
+ * @link https://github.com/edwardstock
  *
  * The MIT License
  *
@@ -27,8 +28,8 @@ package network.minter.bipwallet;
 
 import org.junit.Test;
 
-import network.minter.mintercore.crypto.HashUtil;
-import network.minter.my.models.RegisterData;
+import network.minter.core.crypto.HashUtil;
+import network.minter.profile.models.RegisterData;
 
 import static org.junit.Assert.assertEquals;
 

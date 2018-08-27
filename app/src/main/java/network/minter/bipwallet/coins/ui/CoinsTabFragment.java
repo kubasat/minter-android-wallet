@@ -1,7 +1,7 @@
-/*******************************************************************************
+/*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
- * @link https://github.com/edwardstock
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -22,16 +22,18 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- ******************************************************************************/
+ */
 
 package network.minter.bipwallet.coins.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -57,6 +59,7 @@ import network.minter.bipwallet.home.HomeTabFragment;
 import network.minter.bipwallet.home.ui.HomeActivity;
 import network.minter.bipwallet.internal.views.widgets.BipCircleImageView;
 import network.minter.bipwallet.tx.ui.TransactionListActivity;
+import network.minter.explorer.MinterExplorerApi;
 import timber.log.Timber;
 
 /**
@@ -74,12 +77,38 @@ public class CoinsTabFragment extends HomeTabFragment implements CoinsTabModule.
     @BindView(R.id.balance_fractions) TextView balanceFract;
     @BindView(R.id.balance_coin_name) TextView balanceCoinName;
     @BindView(R.id.list) RecyclerView list;
+    @BindView(R.id.container_swipe_refresh) SwipeRefreshLayout swipeRefreshLayout;
     private Unbinder mUnbinder;
 
     @Override
     public void onAttach(Context context) {
         HomeModule.getComponent().inject(this);
         super.onAttach(context);
+    }
+
+    @Override
+    public void setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener listener) {
+        swipeRefreshLayout.setOnRefreshListener(listener);
+    }
+
+    @Override
+    public void showRefreshProgress() {
+        swipeRefreshLayout.setRefreshing(true);
+    }
+
+    @Override
+    public void hideRefreshProgress() {
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    public void startExplorer(String hash) {
+        getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MinterExplorerApi.FRONT_URL + "/transactions/" + hash)));
+    }
+
+    @Override
+    public void scrollTop() {
+        list.post(() -> list.scrollToPosition(0));
     }
 
     @Nullable

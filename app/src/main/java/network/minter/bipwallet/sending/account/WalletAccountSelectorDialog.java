@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2018 by MinterTeam
+ * Copyright (C) by MinterTeam. 2018
  * @link https://github.com/MinterTeam
+ * @link https://github.com/edwardstock
  *
  * The MIT License
  *
@@ -41,7 +42,7 @@ import network.minter.bipwallet.R;
 import network.minter.bipwallet.advanced.models.AccountItem;
 import network.minter.bipwallet.internal.dialogs.WalletDialog;
 import network.minter.bipwallet.internal.dialogs.WalletDialogBuilder;
-import network.minter.mintercore.crypto.MinterAddress;
+import network.minter.core.crypto.MinterAddress;
 
 /**
  * MinterWallet. 2018
@@ -93,7 +94,7 @@ public class WalletAccountSelectorDialog extends WalletDialog {
 
         @Override
         public WalletAccountSelectorDialog create() {
-            return new WalletAccountSelectorDialog(mContext, this);
+            return new WalletAccountSelectorDialog(getContext(), this);
         }
 
         public Builder setOnClickListener(AccountSelectedAdapter.OnClickListener listener) {
@@ -101,13 +102,13 @@ public class WalletAccountSelectorDialog extends WalletDialog {
             return this;
         }
 
-        public Builder addItem(String avatar, String coin, MinterAddress address, BigDecimal balance, BigDecimal balanceUsd) {
-            mItems.add(new AccountItem(avatar, coin, address, balance, balanceUsd));
+        public Builder addItem(String avatar, String coin, MinterAddress address, BigDecimal balance, BigDecimal balanceUsd, BigDecimal balanceBase) {
+            mItems.add(new AccountItem(avatar, coin, address, balance, balanceUsd, balanceBase));
             return this;
         }
 
-        public Builder addItem(String coin, MinterAddress address, BigDecimal balance, BigDecimal balanceUsd) {
-            mItems.add(new AccountItem(coin, address, balance, balanceUsd));
+        public Builder addItem(String coin, MinterAddress address, BigDecimal balance, BigDecimal balanceUsd, BigDecimal balanceBase) {
+            mItems.add(new AccountItem(coin, address, balance, balanceUsd, balanceBase));
             return this;
         }
 

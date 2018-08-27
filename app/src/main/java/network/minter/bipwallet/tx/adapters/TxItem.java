@@ -1,7 +1,7 @@
-/*******************************************************************************
+/*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
- * @link https://github.com/edwardstock
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -22,17 +22,35 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- ******************************************************************************/
+ */
 
 package network.minter.bipwallet.tx.adapters;
 
 import android.annotation.SuppressLint;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-import network.minter.explorerapi.models.HistoryTransaction;
+import java.util.List;
+
+import network.minter.bipwallet.R;
+import network.minter.bipwallet.tx.adapters.vh.TxConvertCoinViewHolder;
+import network.minter.bipwallet.tx.adapters.vh.TxCreateCoinViewHolder;
+import network.minter.bipwallet.tx.adapters.vh.TxDeclareCandidacyViewHolder;
+import network.minter.bipwallet.tx.adapters.vh.TxHeaderViewHolder;
+import network.minter.bipwallet.tx.adapters.vh.TxProgressViewHolder;
+import network.minter.bipwallet.tx.adapters.vh.TxSendCoinViewHolder;
+import network.minter.bipwallet.tx.adapters.vh.TxSetCandidateOnlineOfflineViewHolder;
+import network.minter.bipwallet.tx.adapters.vh.TxUnhandledViewHolder;
+import network.minter.core.crypto.MinterAddress;
+import network.minter.explorer.models.HistoryTransaction;
+import network.minter.profile.MinterProfileApi;
+
+import static network.minter.bipwallet.internal.common.Preconditions.firstNonNull;
 
 /**
  * MinterWallet. 2018
- *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class TxItem implements TransactionItem {
@@ -42,8 +60,80 @@ public class TxItem implements TransactionItem {
 
     public TxItem(HistoryTransaction tx) {
         mTx = tx;
-        mAvatar = tx.getAvatar();
+        mAvatar = firstNonNull(tx.getAvatar(), MinterProfileApi.getUserAvatarUrl(1));
         mUsername = tx.username;
+    }
+
+    public static RecyclerView.ViewHolder createViewHolder(final LayoutInflater inflater, final ViewGroup parent, @ListType int viewType) {
+        View view;
+        RecyclerView.ViewHolder out;
+        switch (viewType) {
+            case ITEM_HEADER:
+                view = inflater.inflate(R.layout.item_list_transaction_header, parent, false);
+                out = new TxHeaderViewHolder(view);
+                break;
+            case ITEM_PROGRESS:
+                view = inflater.inflate(R.layout.item_list_transaction_progress, parent, false);
+                out = new TxProgressViewHolder(view);
+                break;
+            case TX_SEND:
+                view = inflater.inflate(R.layout.item_list_tx_send_coin_expandable, parent, false);
+                out = new TxSendCoinViewHolder(view);
+                break;
+            case TX_SELL_COIN:
+            case TX_BUY_COIN:
+            case TX_SELL_ALL_COINS:
+                view = inflater.inflate(R.layout.item_list_tx_convert_coin_expandable, parent, false);
+                out = new TxConvertCoinViewHolder(view);
+                break;
+            case TX_CREATE_COIN:
+                view = inflater.inflate(R.layout.item_list_tx_create_coin_expandable, parent, false);
+                out = new TxCreateCoinViewHolder(view);
+                break;
+            case TX_DECLARE_CANDIDACY:
+                view = inflater.inflate(R.layout.item_list_tx_declare_candidacy_expandable, parent, false);
+                out = new TxDeclareCandidacyViewHolder(view);
+                break;
+            case TX_SET_CANDIDATE_ONLINE:
+            case TX_SET_CANDIDATE_OFFLINE:
+                view = inflater.inflate(R.layout.item_list_tx_set_candidate_on_off_expandable, parent, false);
+                out = new TxSetCandidateOnlineOfflineViewHolder(view);
+                break;
+
+            default:
+                view = inflater.inflate(R.layout.item_list_tx_unhandled_expandable, parent, false);
+                out = new TxUnhandledViewHolder(view);
+                break;
+        }
+
+        return out;
+    }
+
+    public static void bindViewHolder(List<MinterAddress> myAddresses, RecyclerView.ViewHolder holder, TransactionItem data) {
+        if (holder instanceof TxHeaderViewHolder) {
+            HeaderItem item = ((HeaderItem) data);
+            ((TxHeaderViewHolder) holder).header.setText(item.getHeader());
+        } else if (holder instanceof TxProgressViewHolder) {
+            // do nothing
+        } else if (holder instanceof TxSendCoinViewHolder) {
+            final TxItem txItem = ((TxItem) data);
+            ((TxSendCoinViewHolder) holder).bind(txItem, myAddresses);
+        } else if (holder instanceof TxConvertCoinViewHolder) {
+            final TxItem txItem = ((TxItem) data);
+            ((TxConvertCoinViewHolder) holder).bind(txItem);
+        } else if (holder instanceof TxCreateCoinViewHolder) {
+            final TxItem txItem = ((TxItem) data);
+            ((TxCreateCoinViewHolder) holder).bind(txItem);
+        } else if (holder instanceof TxDeclareCandidacyViewHolder) {
+            final TxItem txItem = ((TxItem) data);
+            ((TxDeclareCandidacyViewHolder) holder).bind(txItem);
+        } else if (holder instanceof TxSetCandidateOnlineOfflineViewHolder) {
+            final TxItem txItem = ((TxItem) data);
+            ((TxSetCandidateOnlineOfflineViewHolder) holder).bind(txItem);
+        } else {
+            final TxItem txItem = ((TxItem) data);
+            ((TxUnhandledViewHolder) holder).bind(txItem);
+        }
     }
 
     public String getAvatar() {

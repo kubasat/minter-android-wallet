@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2018 by MinterTeam
-  ~ @link https://github.com/MinterTeam
+  ~ Copyright (C) by MinterTeam. 2018
+  ~ @link <a href="https://github.com/MinterTeam">Org Github</a>
+  ~ @link <a href="https://github.com/edwardstock">Maintainer Github</a>
   ~
   ~ The MIT License
   ~
@@ -63,37 +64,56 @@
             />
 
         <TextView
-            android:id="@+id/item_title"
-            android:layout_width="0dp"
+            android:id="@+id/item_title_type"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_min"
             android:layout_marginEnd="@dimen/margin_min"
-            android:textSize="@dimen/text_size_default"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="Create Coin"
+            android:fontFamily="@font/_ubuntu_medium"
+            android:textColor="@color/textColorGrey"
+            android:textSize="@dimen/text_size_11"
+            app:layout_constraintBottom_toTopOf="@id/item_title"
             app:layout_constraintEnd_toStartOf="@id/item_amount"
             app:layout_constraintStart_toEndOf="@id/item_avatar"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Mxfe6001...61eE99"
+            app:layout_constraintVertical_chainStyle="packed"
             />
 
         <TextView
             android:id="@+id/item_amount"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/margin_min"
             android:fontFamily="@font/_ubuntu_medium"
             android:textAlignment="viewEnd"
             android:textColor="@color/textColorGreen"
-            android:textSize="@dimen/text_size_default"
+            android:textSize="@dimen/text_size_tx_amount"
             app:layout_constraintBottom_toTopOf="@id/item_subamount"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1"
-            app:layout_constraintStart_toEndOf="@id/item_title"
+            app:layout_constraintStart_toEndOf="@id/item_title_type"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias=".5"
             app:layout_constraintVertical_chainStyle="packed"
-            tools:text="[+] ANDCOIN"
+            tools:text="- 2000000000000.102030405060708090"
+            />
+
+        <TextView
+            android:id="@+id/item_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_min"
+            android:layout_marginEnd="@dimen/margin_min"
+            android:textSize="@dimen/text_size_default"
+            android:fontFamily="@font/_ubuntu_bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/item_title_separator"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toEndOf="@id/item_avatar"
+            app:layout_constraintTop_toBottomOf="@id/item_title_type"
+            tools:text="BIP"
             />
 
         <TextView
@@ -108,7 +128,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/item_amount"
-            tools:text=""
+            tools:text="BIP"
             />
     </android.support.constraint.ConstraintLayout>
 
@@ -151,8 +171,8 @@
             android:id="@+id/detail_coin_name_value"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/_ubuntu_medium"
-            android:textSize="@dimen/text_size_12"
+            android:fontFamily="@font/_ubuntu_mono_bold"
+            android:textSize="@dimen/text_size_tx_detail_value"
             app:layout_constraintEnd_toStartOf="@id/detail_coin_symbol_value"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/detail_coin_name_label"
@@ -175,8 +195,9 @@
             android:id="@+id/detail_coin_symbol_value"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/_ubuntu_medium"
-            android:textSize="@dimen/text_size_12"
+            android:fontFamily="@font/_ubuntu_mono_bold"
+            android:textAllCaps="true"
+            android:textSize="@dimen/text_size_tx_detail_value"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/detail_coin_name_value"
             app:layout_constraintTop_toBottomOf="@id/detail_coin_symbol_label"
@@ -199,8 +220,8 @@
             android:id="@+id/detail_date_value"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/_ubuntu_medium"
-            android:textSize="@dimen/text_size_12"
+            android:fontFamily="@font/_ubuntu_mono_bold"
+            android:textSize="@dimen/text_size_tx_detail_value"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/detail_date_label"
             app:layout_constraintWidth_percent=".5"
@@ -223,8 +244,8 @@
             android:id="@+id/detail_time_value"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/_ubuntu_medium"
-            android:textSize="@dimen/text_size_12"
+            android:fontFamily="@font/_ubuntu_mono_bold"
+            android:textSize="@dimen/text_size_tx_detail_value"
             app:layout_constraintStart_toEndOf="@id/detail_date_value"
             app:layout_constraintTop_toBottomOf="@id/detail_date_label"
             app:layout_constraintWidth_percent=".5"
@@ -248,9 +269,9 @@
             android:id="@+id/detail_initial_amount_value"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/_ubuntu_medium"
+            android:fontFamily="@font/_ubuntu_mono_bold"
             android:paddingEnd="8dp"
-            android:textSize="@dimen/text_size_12"
+            android:textSize="@dimen/text_size_tx_detail_value"
             app:layout_constraintTop_toBottomOf="@id/detail_initial_amount_label"
             app:layout_constraintWidth_percent=".5"
             tools:text="10000000.010203040506070809"
@@ -272,8 +293,8 @@
             android:id="@+id/detail_initial_reserve_value"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/_ubuntu_medium"
-            android:textSize="@dimen/text_size_12"
+            android:fontFamily="@font/_ubuntu_mono_bold"
+            android:textSize="@dimen/text_size_tx_detail_value"
             app:layout_constraintStart_toEndOf="@id/detail_initial_amount_value"
             app:layout_constraintTop_toBottomOf="@id/detail_initial_reserve_label"
             app:layout_constraintWidth_percent=".5"
@@ -296,17 +317,17 @@
             android:id="@+id/detail_constant_reserve_ratio_value"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/_ubuntu_medium"
-            android:textSize="@dimen/text_size_12"
+            android:fontFamily="@font/_ubuntu_mono_bold"
+            android:textSize="@dimen/text_size_tx_detail_value"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/detail_constant_reserve_ratio_label"
             tools:text="10000000.010203040506070809"
             />
 
-        <Button
+        <network.minter.bipwallet.internal.views.widgets.WalletButton
             android:id="@+id/action"
-            style="@style/Wallet.Button.GreyBg.BlueBorder"
+            style="@style/Wallet.Button.Transparent.BlueBorder"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_edges"

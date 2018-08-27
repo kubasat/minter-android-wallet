@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2018 by MinterTeam
- * @link https://github.com/MinterTeam
+ * Copyright (C) by MinterTeam. 2018
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -48,6 +49,8 @@ import network.minter.bipwallet.addresses.models.AddressItem;
 import network.minter.bipwallet.internal.helpers.ContextHelper;
 import timber.log.Timber;
 
+import static network.minter.bipwallet.internal.helpers.MathHelper.bdHuman;
+
 /**
  * MinterWallet. 2018
  *
@@ -66,7 +69,8 @@ public class AddressListAdapter extends PagedListAdapter<AddressItem, AddressLis
         }
     };
     private LayoutInflater mInflater;
-    private OnAddressClickListener mAddressClickListener;
+    private OnAddressClickListener mOnAddressClickListener;
+    private OnBalanceClickListener mOnBalanceClickListener;
     private OnSetMainListener mOnSetMainListener;
 
     public AddressListAdapter() {
@@ -79,6 +83,10 @@ public class AddressListAdapter extends PagedListAdapter<AddressItem, AddressLis
 
     public void setOnSetMainListener(OnSetMainListener listener) {
         mOnSetMainListener = listener;
+    }
+
+    public void setOnBalanceClickListener(OnBalanceClickListener listener) {
+        mOnBalanceClickListener = listener;
     }
 
     @NonNull
@@ -105,8 +113,8 @@ public class AddressListAdapter extends PagedListAdapter<AddressItem, AddressLis
 
         holder.address.setText(item.address.toString());
         holder.address.setOnClickListener(v -> {
-            if (mAddressClickListener != null) {
-                mAddressClickListener.onClick(v, item);
+            if (mOnAddressClickListener != null) {
+                mOnAddressClickListener.onClick(v, holder.addressTitle.getText().toString(), item);
             }
         });
         holder.actionCopy.setOnClickListener(v -> {
@@ -118,6 +126,12 @@ public class AddressListAdapter extends PagedListAdapter<AddressItem, AddressLis
                 mOnSetMainListener.onSetMain(isChecked, item);
             }
         });
+
+        if (mOnBalanceClickListener != null) {
+            holder.balanceLayout.setOnClickListener(v -> {
+                mOnBalanceClickListener.onClick(v, getItem(holder.getAdapterPosition()));
+            });
+        }
 
         if (item.balance.getStateLiveData().getValue() == AddressItem.BalanceState.Loading) {
             Timber.d("Showing progress");
@@ -144,19 +158,19 @@ public class AddressListAdapter extends PagedListAdapter<AddressItem, AddressLis
             });
         } else {
             Timber.d("Showing amount");
-            holder.balanceValue.setText(item.balance.getAmount().toPlainString());
+            holder.balanceValue.setText(bdHuman(item.balance.getAmount(), 4));
             holder.balanceValue.setVisibility(View.VISIBLE);
             holder.balanceProgress.setVisibility(View.GONE);
         }
     }
 
     public void setOnAddressClickListener(OnAddressClickListener clickListener) {
-        mAddressClickListener = clickListener;
+        mOnAddressClickListener = clickListener;
     }
 
 //    private int findByAddress(MinterAddress address) {
 //        int pos = 0;
-//        for (MyAddressData d : mItems) {
+//        for (ProfileAddressData d : mItems) {
 //            if (d.address.equals(address)) {
 //                return pos;
 //            }
@@ -167,6 +181,10 @@ public class AddressListAdapter extends PagedListAdapter<AddressItem, AddressLis
 //    }
 
     public interface OnAddressClickListener {
+        void onClick(View v, String addressName, AddressItem address);
+    }
+
+    public interface OnBalanceClickListener {
         void onClick(View v, AddressItem address);
     }
 
@@ -178,12 +196,14 @@ public class AddressListAdapter extends PagedListAdapter<AddressItem, AddressLis
         @BindView(R.id.address_title) TextView addressTitle;
         @BindView(R.id.address) TextView address;
         @BindView(R.id.action_copy) View actionCopy;
+        @BindView(R.id.balance_layout) View balanceLayout;
         @BindView(R.id.balance_value) TextView balanceValue;
         @BindView(R.id.balance_progress) ProgressBar balanceProgress;
         @BindView(R.id.secured_value) TextView securedValue;
         @BindView(R.id.default_switch) Switch defSwitch;
         @BindView(R.id.row_address) View rowAddress;
         @BindView(R.id.row_secured) View rowSecured;
+
 
         public ViewHolder(View itemView) {
             super(itemView);

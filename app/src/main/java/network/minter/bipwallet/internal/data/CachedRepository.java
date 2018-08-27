@@ -1,7 +1,7 @@
-/*******************************************************************************
+/*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
- * @link https://github.com/edwardstock
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -22,7 +22,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- ******************************************************************************/
+ */
 
 package network.minter.bipwallet.internal.data;
 
@@ -48,7 +48,6 @@ import timber.log.Timber;
 
 /**
  * Wallet. 2017
- *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class CachedRepository<ResultModel, Entity extends CachedEntity<ResultModel>> {
@@ -67,21 +66,22 @@ public class CachedRepository<ResultModel, Entity extends CachedEntity<ResultMod
     protected final static int NOTIFY_ONLY_ON_UPDATE = 1;
     private final Entity mEntity;
     ResultModel mData;
-    boolean mDataIsReady = false;
+    boolean mDataIsReady;
     Date mExpiredAt = null;
     Date mLastUpdateTime = null;
     private BehaviorSubject<MetaResult<ResultModel>> mMetaNotifier = BehaviorSubject.create();
     private BehaviorSubject<ResultModel> mNotifier = BehaviorSubject.create();
     private CompositeDisposable subscriptions = new CompositeDisposable();
+    private int mExpireTime = DEFAULT_EXPIRE_TIME;
 
     public CachedRepository(Entity entity) {
         mEntity = entity;
+        mData = initialData();
+        expire();
+        mDataIsReady = false;
     }
 
-    protected ResultModel initialData() {
-        return mEntity.initialData();
-    }
-
+    @SuppressWarnings("unchecked")
     public Class<Entity> getEntityClass() {
         return (Class<Entity>) mEntity.getClass();
     }
@@ -118,14 +118,16 @@ public class CachedRepository<ResultModel, Entity extends CachedEntity<ResultMod
      */
     public void clear() {
         Timber.d("Call clear on entity %s", mEntity.getClass().getName());
+        mEntity.onClear();
         mData = mEntity.initialData();
         mDataIsReady = false;
         expire();
+        mNotifier.onComplete();
+        mNotifier = BehaviorSubject.create();
     }
 
     /**
      * Observer for update event
-     *
      * @return obserable with ResultModel
      * @see ResultModel
      * @see Observable
@@ -138,7 +140,6 @@ public class CachedRepository<ResultModel, Entity extends CachedEntity<ResultMod
 
     /**
      * Check data for expiration
-     *
      * @return true if data is expired
      */
     public boolean isExpired() {
@@ -167,13 +168,17 @@ public class CachedRepository<ResultModel, Entity extends CachedEntity<ResultMod
         mExpiredAt.setTime(mExpiredAt.getTime() + expireTime);
     }
 
+    public CachedRepository<ResultModel, Entity> setTimeToLive(int ttl) {
+        mExpireTime = ttl;
+        return this;
+    }
+
     /**
      * Returns seconds to object life (ttl)
-     *
      * @return integer seconds
      */
     public int getExpireTime() {
-        return DEFAULT_EXPIRE_TIME;
+        return mExpireTime;
     }
 
     /**
@@ -206,7 +211,6 @@ public class CachedRepository<ResultModel, Entity extends CachedEntity<ResultMod
 
     /**
      * Returns updatable data
-     *
      * @return null if not loaded
      */
     public ResultModel getData() {
@@ -215,7 +219,6 @@ public class CachedRepository<ResultModel, Entity extends CachedEntity<ResultMod
 
     /**
      * Setting data
-     *
      * @param data Any
      */
     @CallSuper
@@ -234,9 +237,8 @@ public class CachedRepository<ResultModel, Entity extends CachedEntity<ResultMod
 
     /**
      * Creates zip function and after update first value, returns current object value
-     *
      * @param first Any observable
-     * @param <T>   Any type
+     * @param <T> Any type
      * @return Observable
      */
     public <T> Observable<ResultModel> updateAfter(Observable<T> first) {
@@ -338,7 +340,6 @@ public class CachedRepository<ResultModel, Entity extends CachedEntity<ResultMod
      * Return subscriber that subscribes to all updates of this repository including some additional
      * information about data
      * Every time, consumer will call #update(), subscriber will notified about updating
-     *
      * @return ReplaySubject
      * @see MetaResult
      */
@@ -349,7 +350,6 @@ public class CachedRepository<ResultModel, Entity extends CachedEntity<ResultMod
     /**
      * Return subscriber that subscribes to all updates of this repository
      * Every time, consumer will call #update(), subscriber will notified about updating
-     *
      * @return BehaviorSubject
      */
     public BehaviorSubject<ResultModel> observe() {
@@ -364,6 +364,10 @@ public class CachedRepository<ResultModel, Entity extends CachedEntity<ResultMod
         mData = data;
         mDataIsReady = true;
         notifyOnSuccess(true);
+    }
+
+    protected ResultModel initialData() {
+        return mEntity.initialData();
     }
 
     protected void onExpired() {

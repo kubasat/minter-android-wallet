@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * Copyright (C) by MinterTeam. 2018
  * @link https://github.com/MinterTeam
  * @link https://github.com/edwardstock
@@ -22,7 +22,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- ******************************************************************************/
+ */
 
 package network.minter.bipwallet.internal.dialogs;
 
@@ -47,9 +47,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import network.minter.bipwallet.R;
-import network.minter.bipwallet.auth.ui.InputGroup;
 import network.minter.bipwallet.internal.common.CallbackProvider;
+import network.minter.bipwallet.internal.helpers.forms.InputGroup;
 import network.minter.bipwallet.internal.helpers.forms.validators.BaseValidator;
+import network.minter.bipwallet.internal.views.text.PrefixEditText;
+import network.minter.bipwallet.internal.views.widgets.ColoredProgressBar;
+import timber.log.Timber;
 
 /**
  * MinterWallet. 2018
@@ -57,8 +60,10 @@ import network.minter.bipwallet.internal.helpers.forms.validators.BaseValidator;
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class WalletInputDialog extends WalletDialog {
-    @BindView(R.id.layout_input_stub) ViewStub mInputStub;
+    @BindView(R.id.layout_input_stub) ViewStub inputStub;
     @BindView(R.id.input_description) TextView description;
+    @BindView(R.id.progress) ColoredProgressBar progress;
+    @BindView(R.id.input_root) View rootView;
     @BindView(R.id.action) Button action;
     private Builder mBuilder;
     private InputGroup mInputGroup;
@@ -72,6 +77,39 @@ public class WalletInputDialog extends WalletDialog {
         mInputGroup = new InputGroup();
     }
 
+    public void setError(CharSequence message) {
+        if (mInputLayout == null) {
+            Timber.e("Input layout is null");
+            return;
+        }
+
+        mInputLayout.setErrorEnabled(message != null && message.length() > 0);
+        if (message == null) {
+            mInputLayout.setErrorEnabled(false);
+            mInputLayout.setError(null);
+            return;
+        }
+
+        mInputLayout.setError(message);
+    }
+
+    public void showProgress() {
+        rootView.setAlpha(.2F);
+        progress.setVisibility(View.VISIBLE);
+        action.setClickable(false);
+        mInputLayout.setClickable(false);
+        mInputLayout.getEditText().setClickable(false);
+
+    }
+
+    public void hideProgress() {
+        progress.setVisibility(View.GONE);
+        rootView.setAlpha(1F);
+        action.setClickable(true);
+        mInputLayout.setClickable(true);
+        mInputLayout.getEditText().setClickable(true);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,20 +118,29 @@ public class WalletInputDialog extends WalletDialog {
         title.setText(mBuilder.mTitle);
 
         if (mBuilder.mInputTypeFlags == InputType.TYPE_NULL) {
-            mInputStub.setLayoutResource(R.layout.inc_dialog_input_prefix);
+            inputStub.setLayoutResource(R.layout.inc_dialog_input_prefix);
         } else {
-            mInputStub.setLayoutResource(R.layout.inc_dialog_input_simple);
+            inputStub.setLayoutResource(R.layout.inc_dialog_input_simple);
         }
-        mInputLayout = (TextInputLayout) mInputStub.inflate();
+        mInputLayout = (TextInputLayout) inputStub.inflate();
         final TextInputEditText input = (TextInputEditText) mInputLayout.getEditText();
         assert input != null;
 
-        input.setText(mBuilder.mValue.get());
+        if (input instanceof PrefixEditText) {
+            ((PrefixEditText) input).setValue(mBuilder.mValue.get());
+        } else {
+            input.setText(mBuilder.mValue.get());
+        }
+
         mInputLayout.setHintEnabled(mBuilder.mHint != null);
         if (mBuilder.mHint != null) {
             mInputLayout.setHint(mBuilder.mHint);
         }
-        input.setInputType(mBuilder.mInputTypeFlags);
+
+        if (mBuilder.mInputTypeFlags != InputType.TYPE_NULL) {
+            input.setInputType(mBuilder.mInputTypeFlags);
+        }
+
 
         description.setText(mBuilder.mDescription);
         description.setVisibility(mBuilder.mDescription != null ? View.VISIBLE : View.GONE);
@@ -107,16 +154,19 @@ public class WalletInputDialog extends WalletDialog {
                     .forEach(item -> mInputGroup.addValidator(mInputLayout, item));
         }
 
-
         mInputGroup.addTextChangedListener((editText, valid) -> {
+            if (mBuilder.mTextChangedListener != null) {
+                mBuilder.mTextChangedListener.onTextChanged(editText, valid);
+            }
             if (valid) {
                 mOutValue = editText.getText().toString();
             } else {
                 mOutValue = null;
             }
         });
+        mOutValue = mBuilder.mValue.get();
         mInputGroup.addFormValidateListener(valid -> mValid = valid);
-        action.setTag(mBuilder.mFieldName);
+        input.setTag(mBuilder.mFieldName);
 
         action.setOnClickListener(v -> {
             if (!mValid) {
@@ -124,15 +174,11 @@ public class WalletInputDialog extends WalletDialog {
             }
 
             if (mBuilder.mOnSubmitListener != null) {
-                final String fieldName = v.getTag() == null ? null : ((String) v.getTag());
-                if (mBuilder.mOnSubmitListener.onSubmit(fieldName, mOutValue)) {
-                    dismiss();
-                }
-
-                return;
+                final String fname = input.getTag() != null ? (String) input.getTag() : null;
+                mBuilder.mOnSubmitListener.onSubmit(this, fname, mOutValue);
+            } else {
+                dismiss();
             }
-
-            dismiss();
         });
     }
 
@@ -142,7 +188,7 @@ public class WalletInputDialog extends WalletDialog {
          * @param value
          * @return True if dismiss, false - dialog will not be dismissed
          */
-        boolean onSubmit(@Nullable String fieldName, String value);
+        void onSubmit(WalletInputDialog dialog, @Nullable String fieldName, String value);
     }
 
     public static final class Builder extends WalletDialogBuilder<WalletInputDialog, WalletInputDialog.Builder> {
@@ -154,6 +200,7 @@ public class WalletInputDialog extends WalletDialog {
         private CharSequence mActionTitle;
         private List<BaseValidator> mValidators;
         private String mFieldName = null;
+        private InputGroup.OnTextChangedListener mTextChangedListener;
 
         public Builder(Context context, CharSequence title) {
             super(context, title);
@@ -164,13 +211,18 @@ public class WalletInputDialog extends WalletDialog {
             return this;
         }
 
+        public Builder setTextChangedListener(InputGroup.OnTextChangedListener textChangedListener) {
+            mTextChangedListener = textChangedListener;
+            return this;
+        }
+
         public Builder setDescription(CharSequence text) {
             mDescription = text;
             return this;
         }
 
         public Builder setDescription(@StringRes int resId) {
-            return setDescription(mContext.getResources().getString(resId));
+            return setDescription(getContext().getResources().getString(resId));
         }
 
         public Builder setActionTitle(CharSequence title) {
@@ -237,7 +289,7 @@ public class WalletInputDialog extends WalletDialog {
 
         @Override
         public WalletInputDialog create() {
-            return new WalletInputDialog(mContext, this);
+            return new WalletInputDialog(getContext(), this);
         }
     }
 }

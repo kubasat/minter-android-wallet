@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2018 by MinterTeam
- * @link https://github.com/MinterTeam
+ * Copyright (C) by MinterTeam. 2018
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -37,16 +38,16 @@ import io.reactivex.schedulers.Schedulers;
 import network.minter.bipwallet.advanced.repo.SecretStorage;
 import network.minter.bipwallet.internal.data.CachedEntity;
 import network.minter.bipwallet.internal.storage.KVStorage;
-import network.minter.explorerapi.models.HistoryTransaction;
-import network.minter.explorerapi.repo.ExplorerTransactionRepository;
-import network.minter.mintercore.crypto.MinterAddress;
-import network.minter.mintercore.internal.api.ApiService;
+import network.minter.core.crypto.MinterAddress;
+import network.minter.core.internal.api.ApiService;
+import network.minter.explorer.models.HistoryTransaction;
+import network.minter.explorer.repo.ExplorerTransactionRepository;
 
+import static network.minter.bipwallet.internal.ReactiveAdapter.convertToExpErrorResult;
 import static network.minter.bipwallet.internal.ReactiveAdapter.rxCallExp;
 
 /**
  * MinterWallet. 2018
- *
  * @author Eduard Maximovich <edward.vstock@gmail.com>
  */
 public class CachedExplorerTransactionRepository extends ExplorerTransactionRepository implements CachedEntity<List<HistoryTransaction>> {
@@ -62,20 +63,32 @@ public class CachedExplorerTransactionRepository extends ExplorerTransactionRepo
 
     @Override
     public List<HistoryTransaction> initialData() {
-        return Collections.emptyList();
+        return mStorage.get(KEY_TRANSACTIONS, Collections.emptyList());
     }
 
     @Override
     public Observable<List<HistoryTransaction>> getUpdatableData() {
-        return rxCallExp(getService().getTransactions(
+        return rxCallExp(getInstantService().getTransactions(
                 Stream.of(mSecretStorage.getAddresses()).map(MinterAddress::toString).toList()
         ))
-                .map(res -> res.result)
+                .onErrorResumeNext(convertToExpErrorResult())
+                .map(res -> {
+                    if (res.result != null) {
+                        return res.result;
+                    }
+
+                    return Collections.<HistoryTransaction>emptyList();
+                })
                 .subscribeOn(Schedulers.io());
     }
 
     @Override
     public void onAfterUpdate(List<HistoryTransaction> result) {
         mStorage.put(KEY_TRANSACTIONS, result);
+    }
+
+    @Override
+    public void onClear() {
+        mStorage.delete(KEY_TRANSACTIONS);
     }
 }

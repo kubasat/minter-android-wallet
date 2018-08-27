@@ -1,7 +1,7 @@
-/*******************************************************************************
+/*
  * Copyright (C) by MinterTeam. 2018
- * @link https://github.com/MinterTeam
- * @link https://github.com/edwardstock
+ * @link <a href="https://github.com/MinterTeam">Org Github</a>
+ * @link <a href="https://github.com/edwardstock">Maintainer Github</a>
  *
  * The MIT License
  *
@@ -22,11 +22,10 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- ******************************************************************************/
+ */
 
 plugins {
     id 'com.android.application'
-    id 'kotlin-android'
     id 'io.fabric'
 }
 
@@ -37,15 +36,11 @@ android {
         applicationId "network.minter.bipwallet"
         minSdkVersion minterMinSdk
         targetSdkVersion minterMaxSdk
-        versionCode 1
-        versionName "0.7.0-beta"
+        versionCode 13
+        versionName "1.0.0-alpha01"
         testInstrumentationRunner "network.minter.bipwallet.internal.WalletTestRunner"
-        multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
-    }
-
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
+        multiDexEnabled true
     }
 
     lintOptions {
@@ -70,15 +65,13 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.config
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-test-rules.pro'
         }
 
         debug {
             signingConfig signingConfigs.config
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-test-rules.pro'
             testProguardFile 'proguard-test-rules.pro'
         }
@@ -94,51 +87,60 @@ android {
     productFlavors {
         netMain {
             dimension "env"
-            buildConfigField "boolean", "ENABLE_LIVE_BALANCE", 'false'
+            buildConfigField "boolean", "ENABLE_LIVE_BALANCE", 'true'
         }
 
         netMainNoCrashlytics {
             dimension "env"
-            buildConfigField "boolean", "ENABLE_LIVE_BALANCE", 'false'
+            buildConfigField "boolean", "ENABLE_LIVE_BALANCE", 'true'
         }
 
         netTest {
             dimension "env"
-            buildConfigField "boolean", "ENABLE_LIVE_BALANCE", 'false'
+            buildConfigField "boolean", "ENABLE_LIVE_BALANCE", 'true'
         }
 
         netTestNoCrashlytics {
             dimension "env"
-            buildConfigField "boolean", "ENABLE_LIVE_BALANCE", 'false'
+            buildConfigField "boolean", "ENABLE_LIVE_BALANCE", 'true'
         }
     }
 }
 
 ext {
     nav_version = "1.0.0-alpha01"
-    minterSdkVersions = "1.0.0"
+    minterSdkVersions = "0.1.0"
 }
 
 dependencies {
-    implementation 'com.android.support:multidex:1.0.3'
 
-    // sdk
-    netTestImplementation "network.minter.android:minter-android-core-testnet:${minterSdkVersions}"
-    netTestNoCrashlyticsImplementation "network.minter.android:minter-android-core-testnet:${minterSdkVersions}"
-    netMainImplementation "network.minter.android:minter-android-core:${minterSdkVersions}"
-    netMainNoCrashlyticsImplementation "network.minter.android:minter-android-core:${minterSdkVersions}"
-    netTestImplementation "network.minter.android:minter-android-blockchain-testnet:${minterSdkVersions}"
-    netTestNoCrashlyticsImplementation "network.minter.android:minter-android-blockchain-testnet:${minterSdkVersions}"
-    netMainImplementation "network.minter.android:minter-android-blockchain:${minterSdkVersions}"
-    netMainNoCrashlyticsImplementation "network.minter.android:minter-android-blockchain:${minterSdkVersions}"
-    netTestImplementation "network.minter.android:minter-android-explorer-testnet:${minterSdkVersions}"
-    netTestNoCrashlyticsImplementation "network.minter.android:minter-android-explorer-testnet:${minterSdkVersions}"
-    netMainImplementation "network.minter.android:minter-android-explorer:${minterSdkVersions}"
-    netMainNoCrashlyticsImplementation "network.minter.android:minter-android-explorer:${minterSdkVersions}"
-    netTestImplementation "network.minter.android:minter-android-myminter-testnet:${minterSdkVersions}"
-    netTestNoCrashlyticsImplementation "network.minter.android:minter-android-myminter-testnet:${minterSdkVersions}"
-    netMainImplementation "network.minter.android:minter-android-myminter:${minterSdkVersions}"
-    netMainNoCrashlyticsImplementation "network.minter.android:minter-android-myminter:${minterSdkVersions}"
+    netTestImplementation([
+            "network.minter.android:minter-android-core-testnet:${minterSdkVersions}",
+            "network.minter.android:minter-android-explorer-testnet:${minterSdkVersions}",
+            "network.minter.android:minter-android-blockchain-testnet:${minterSdkVersions}",
+            "network.minter.android:minter-android-profile-testnet:${minterSdkVersions}"
+    ])
+
+    netTestNoCrashlyticsImplementation([
+            "network.minter.android:minter-android-core-testnet:${minterSdkVersions}",
+            "network.minter.android:minter-android-explorer-testnet:${minterSdkVersions}",
+            "network.minter.android:minter-android-blockchain-testnet:${minterSdkVersions}",
+            "network.minter.android:minter-android-profile-testnet:${minterSdkVersions}"
+    ])
+
+    netMainImplementation([
+            "network.minter.android:minter-android-core:${minterSdkVersions}",
+            "network.minter.android:minter-android-explorer:${minterSdkVersions}",
+            "network.minter.android:minter-android-blockchain:${minterSdkVersions}",
+            "network.minter.android:minter-android-profile:${minterSdkVersions}"
+    ])
+
+    netMainNoCrashlyticsImplementation([
+            "network.minter.android:minter-android-core:${minterSdkVersions}",
+            "network.minter.android:minter-android-explorer:${minterSdkVersions}",
+            "network.minter.android:minter-android-blockchain:${minterSdkVersions}",
+            "network.minter.android:minter-android-profile:${minterSdkVersions}"
+    ])
 
     // support
     implementation "com.android.support:appcompat-v7:${minterLibSupport}"
@@ -159,16 +161,17 @@ dependencies {
     }
 
     // common
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.2.51'
     implementation 'com.budiyev.android:code-scanner:1.9.0'
     implementation 'com.google.zxing:core:3.3.3'
     implementation 'com.google.zxing:android-core:3.3.0'
     implementation 'com.google.zxing:android-integration:3.3.0'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'com.jakewharton.timber:timber:4.5.1'
-    implementation 'org.parceler:parceler-api:1.1.10'
-    annotationProcessor 'org.parceler:parceler:1.1.10'
+    implementation 'org.parceler:parceler-api:1.1.11'
+    annotationProcessor 'org.parceler:parceler:1.1.11'
     implementation "com.orhanobut:hawk:2.0.1"
-    implementation 'com.annimon:stream:1.1.9'
+    implementation 'com.annimon:stream:1.2.0'
     implementation 'net.danlew:android.joda:2.9.9.1'
     implementation('com.fatboyindustrial.gson-jodatime-serialisers:gson-jodatime-serialisers:1.6.0') {
         exclude group: 'joda-time'
@@ -179,7 +182,7 @@ dependencies {
         exclude module: "support-v13"
     }
     annotationProcessor "com.github.hotchemi:permissionsdispatcher-processor:3.3.1"
-    implementation 'com.github.centrifugal:centrifuge-android:0.36'
+    implementation 'network.minter.android:centrifuge-android:0.37'
 
     // Annotations and DI
     annotationProcessor 'com.google.dagger:dagger-compiler:2.16'
@@ -224,8 +227,8 @@ dependencies {
     annotationProcessor 'com.edwardstock.android:barber-compiler:1.0.0'
     implementation 'com.edwardstock.android:barber-api:1.0.0'
     compileOnly 'com.edwardstock.android:barber-annotations:1.0.0'
-    //noinspection GradleDependency
-    implementation 'com.theartofdev.edmodo:android-image-cropper:2.7.0'
+    //noinspection GradleDynamicVersion,GradleDependency
+    implementation 'com.theartofdev.edmodo:android-image-cropper:2.7.+'
     implementation 'com.redmadrobot:inputmask:3.4.4'
     implementation 'com.pnikosis:materialish-progress:1.7'
 
